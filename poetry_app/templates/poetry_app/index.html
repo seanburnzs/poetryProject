@@ -1,0 +1,37 @@
+{% extends 'poetry_app/base.html' %}
+{% load static %}
+{% block title %}Home - Poetry{% endblock %}
+
+{% block content %}
+
+<div class="news-box mb-4">
+    <h2>News & Updates</h2>
+    {% for news in news_messages %}
+    <div class="news-item">
+        <h3>{{ news.title }}</h3>
+        <p>{{ news.content }}</p>
+        <small>Posted on {{ news.created_at|date:"F j, Y" }}</small>
+    </div>
+    {% empty %}
+    <p>No news at the moment.</p>
+    {% endfor %}
+</div>
+
+<!-- Daily Writing Prompt -->
+<div class="daily-prompt mb-4">
+    <h2>Today's Writing Prompt</h2>
+    {% if daily_prompt %}
+    <p>{{ daily_prompt.prompt_text }}</p>
+    {% else %}
+    <p>No prompt for today. Check back tomorrow!</p>
+    {% endif %}
+</div>
+
+<!-- Create Button -->
+<div class="create-button mb-4">
+    <a href="{% url 'poetry_app:submit_poetry' %}" class="btn btn-theme-secondary">Create a Poem</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

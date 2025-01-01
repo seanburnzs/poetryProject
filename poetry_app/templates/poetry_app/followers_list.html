@@ -1,0 +1,17 @@
+{% extends 'poetry_app/base.html' %}
+{% block title %}Followers of {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<h2>Followers of {{ profile_user.username }}</h2>
+<ul class="list-group">
+    {% for follow in followers %}
+    <li class="list-group-item">
+        <a href="{% url 'poetry_app:user_profile' follow.follower.username %}">
+            {{ follow.follower.username }}
+        </a>
+    </li>
+    {% empty %}
+    <li class="list-group-item poem-box-primary">No followers yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'poetry_app/base.html' %}
+{% load static %}
+
+{% block title %}Logged Out - Poetry{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>You have been logged out.</h2>
+    <p><a href="{% url 'poetry_app:login' %}">Click here</a> to log in again.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% if user.is_authenticated and user.profile.dark_mode %}dark{% else %}light{% endif %}">
+{% load static crispy_forms_tags %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Poetry App{% endblock %}</title>
+
+    <!-- Bootstrap CSS (version 5.3.0) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+
+    {% block extra_head %}
+    {% endblock %}
+</head>
+<body>
+    <!-- Loader (AJAX loader functionality) -->
+    <div id="loader" class="loader">
+        <div class="spinner-border text-primary spinner-lg" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="d-flex justify-content-between align-items-center p-3">
+        <!-- Left: Site Title -->
+        <a class="navbar-brand fs-3 fw-bold text-decoration-none" href="{% url 'poetry_app:discover' %}">
+            Poetry
+        </a>
+
+        <!-- Right: Create, Search, Hamburger -->
+        <div class="d-flex align-items-center position-relative">
+            <!-- Create Button -->
+            <a href="{% url 'poetry_app:submit_poetry' %}" class="btn btn-outline-secondary me-2" aria-label="Create">
+                <i class="fas fa-plus-circle"></i>
+            </a>
+
+            <!-- Search Button -->
+            <a href="{% url 'poetry_app:search_users' %}" class="btn btn-outline-secondary me-2" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </a>
+
+            {% if NOTIFICATIONS_ENABLED and user.is_authenticated %}
+                <!-- Notifications Button -->
+                <a href="{% url 'poetry_app:notifications' %}" class="btn btn-outline-secondary me-2" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    {% if unread_notifications_count %}
+                        <span class="badge bg-danger">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </a>
+            {% endif %}
+
+            <!-- Hamburger Icon (Animated) -->
+            <label class="hamburger">
+                <input type="checkbox" id="hamburgerToggle" />
+                <svg viewBox="0 0 32 32">
+                    <path class="line line-top-bottom"
+                          d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22">
+                    </path>
+                    <path class="line" d="M7 16 27 16"></path>
+                </svg>
+            </label>
+
+            <!-- Hamburger Menu (Hidden by default) -->
+            <div id="hamburgerMenu" class="hamburger-menu d-none position-absolute p-3">
+                <ul class="list-unstyled mb-0">
+                    {% if user.is_authenticated %}
+                    <!-- My Profile Button -->
+                    <li>
+                        <a href="{% url 'poetry_app:user_profile' user.username %}">
+                            <button class="button-profile">
+                                <!-- icon (FA user) -->
+                                <i class="fas fa-user"></i>
+                                <span>My Profile</span>
+                            </button>
+                        </a>
+                    </li>
+                    <!-- Settings Button -->
+                    <li class="mt-2">
+                        <a href="{% url 'poetry_app:preferences' %}">
+                            <button class="button-settings">
+                                <!-- Gear Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="20"
+                                     height="20"
+                                     fill="none"
+                                     class="svg-icon">
+                                    <g stroke-width="1.5" stroke-linecap="round" stroke="#5d41de">
+                                        <circle r="2.5" cy="10" cx="10"></circle>
+                                        <path fill-rule="evenodd"
+                                              d="m8.39079 2.80235c.53842-1.51424 2.67991-1.51424 3.21831-.00001.3392.95358 1.4284 1.40477 2.3425.97027 1.4514-.68995 2.9657.82427 2.2758 2.27575-.4345.91407.0166 2.00334.9702 2.34248 1.5143.53842 1.5143 2.67996 0 3.21836-.9536.3391-1.4047 1.4284-.9702 2.3425.6899 1.4514-.8244 2.9656-2.2758 2.2757-.9141-.4345-2.0033.0167-2.3425.9703-.5384 1.5142-2.67989 1.5142-3.21831 0-.33914-.9536-1.4284-1.4048-2.34247-.9703-1.45148.6899-2.96571-.8243-2.27575-2.2757.43449-.9141-.01669-2.0034-.97028-2.3425-1.51422-.5384-1.51422-2.67994.00001-3.21836.95358-.33914 1.40476-1.42841.97027-2.34248-.68996-1.45148.82427-2.9657 2.27575-2.27575.91407.4345 2.00333-.01669 2.34247-.97026z"
+                                              clip-rule="evenodd"></path>
+                                    </g>
+                                </svg>
+                                <span class="lable">Settings</span>
+                            </button>
+                        </a>
+                    </li>
+                    <!-- Logout Button (Red) -->
+                    <li class="mt-2">
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn">
+                                <div class="sign">
+                                    <svg viewBox="0 0 512 512">
+                                        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text">Logout</div>
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="{% url 'login' %}" class="d-block py-1 text-decoration-none">
+                            Login
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content (Centered) -->
+    <main class="content-center">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Light/Dark Mode Toggle (Fixed at bottom-right) -->
+    <div class="light-dark-toggle">
+        <label class="switch" aria-label="Toggle Light/Dark Mode">
+            <input type="checkbox" id="themeToggleBottom"
+                   {% if user.is_authenticated and user.profile.dark_mode %}checked{% endif %}>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3">
+        <p>© {{ current_year|default:"2024" }} Poetry App. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        /* Reaction Icons */
+        var reactionIcons = {
+            'insightful': 'fas fa-lightbulb text-warning',
+            'beautiful': 'fas fa-feather text-primary',
+            'inspiring': 'fas fa-sun text-success',
+            'sad': 'fas fa-sad-tear text-info',
+            'funny': 'fas fa-laugh text-warning',
+            'thoughtful': 'fas fa-brain text-secondary',
+            'uplifting': 'fas fa-smile-beam text-success',
+        };
+
+        /* AJAX loader logic */
+        let loaderTimeout;
+        document.addEventListener('ajaxSend', function () {
+            loaderTimeout = setTimeout(function () {
+                document.getElementById("loader").style.display = "flex";
+            }, 1000);
+        });
+        document.addEventListener('ajaxComplete', function () {
+            clearTimeout(loaderTimeout);
+            document.getElementById("loader").style.display = "none";
+        });
+        window.addEventListener('load', function () {
+            document.getElementById('loader').style.display = "none";
+        });
+
+        /* Hamburger Toggle */
+        const hamburgerToggle = document.getElementById('hamburgerToggle');
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+
+        if (hamburgerToggle) {
+            hamburgerToggle.addEventListener('click', (e) => {
+                // Check the checkbox state to show/hide menu
+                if (hamburgerToggle.checked) {
+                    hamburgerMenu.classList.remove('d-none');
+                } else {
+                    hamburgerMenu.classList.add('d-none');
+                }
+                e.stopPropagation();
+            });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburgerMenu.contains(e.target) && !hamburgerToggle.contains(e.target)) {
+                hamburgerToggle.checked = false;
+                hamburgerMenu.classList.add('d-none');
+            }
+        });
+
+        /* Bottom Light/Dark Mode Toggle */
+        const themeToggleBottom = document.getElementById('themeToggleBottom');
+        if (themeToggleBottom) {
+            themeToggleBottom.addEventListener('change', (e) => {
+                fetch("{% url 'poetry_app:toggle_dark_mode' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.dark_mode) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                })
+                .catch((error) => {
+                    console.error("Dark mode toggle error:", error);
+                    themeToggleBottom.checked = !themeToggleBottom.checked;
+                });
+            });
+        }
+
+        /* Initialize toggle state on page load */
+        document.addEventListener('DOMContentLoaded', () => {
+            if (themeToggleBottom) {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                themeToggleBottom.checked = (currentTheme === 'dark');
+            }
+        });
+    </script>
+
+    <!-- Additional URLs -->
+    <script>
+        const toggleFavoriteUrl = "{% url 'poetry_app:toggle_favorite_ajax' 0 %}";
+        const toggleLikeUrl = "{% url 'poetry_app:toggle_like_ajax' 0 %}";
+    </script>
+
+    <!-- Like and Favorite JavaScript -->
+    <script src="{% static 'js/like_favorite.js' %}"></script>
+
+    {% block scripts %}
+    {% endblock %}
+
+    {% block modals %}
+    {% endblock %}
+</body>
+</html>

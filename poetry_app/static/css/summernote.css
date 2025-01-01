@@ -1,0 +1,65 @@
+/* summernote.css */ 
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap');
+
+/* Theme Variables */
+:root[data-theme="light"] {
+    --text: #000000;
+    --background: #FFFFFF;
+    --background2: #F5F5F5;
+    --primary: #E0E0E0;
+    --secondary: #C0C0C0;
+    --accent: #E60023;
+}
+
+:root[data-theme="dark"] {
+    --text: #FFFFFF;
+    --background: #000000;
+    --background2: #1C1C1C;
+    --primary: #333333;
+    --secondary: #4F4F4F;
+    --accent: #E60023;
+}
+
+html[data-theme="light"] .note-editor.note-frame,
+html[data-theme="dark"] .note-editor.note-frame {
+    background: var(--primary) !important; 
+}
+
+html[data-theme="light"] .note-toolbar,
+html[data-theme="dark"] .note-toolbar {
+    background: var(--primary) !important; /* Dark toolbar background */
+}
+
+html[data-theme="light"] .note-toolbar .btn,
+html[data-theme="dark"] .note-toolbar .btn {
+    color: var(--text) !important; /* Toolbar button icons color */
+}
+
+html[data-theme="light"] .note-editable,
+html[data-theme="dark"] .note-editable {
+    color: var(--text) !important; /* Editor text color */
+    background: var(--primary) !important; /* Editor background */
+    font-family: 'EB Garamond', serif !important; /* Font family */
+}
+
+html[data-theme="light"] .note-editable a,
+html[data-theme="dark"] .note-editable a {
+    color: #007bff !important; /* Link color */
+}
+
+html[data-theme="light"] .note-editable::placeholder,
+html[data-theme="dark"] .note-editable::placeholder {
+    color: #6c757d !important; /* Placeholder text color */
+}
+
+/* Status Bar Styles */
+html[data-theme="light"] .note-statusbar,
+html[data-theme="dark"] .note-statusbar {
+    background: var(--secondary) !important;
+    color: var(--text) !important;
+}
+
+html[data-theme="light"] .note-editor.note-frame .note-toolbar .btn,
+html[data-theme="dark"] .note-editor.note-frame .note-toolbar .btn {
+    color: var(--text) !important;
+}

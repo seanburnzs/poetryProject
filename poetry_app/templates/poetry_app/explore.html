@@ -1,0 +1,18 @@
+{% extends 'poetry_app/base.html' %}
+
+{% block title %}Explore{% endblock %}
+
+{% block content %}
+<h1>Explore Poems</h1>
+
+<h2>Random Poems</h2>
+<ul>
+    {% for poem in random_poems %}
+    <li>
+        <h3>{{ poem.title }}</h3>
+        <p>{{ poem.body }}</p>
+        <small>Posted by {{ poem.author.username }} on {{ poem.created_at }}</small>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

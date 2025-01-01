@@ -1,0 +1,17 @@
+{% extends 'poetry_app/base.html' %}
+{% block title %}Report Poem{% endblock %}
+
+{% block content %}
+<h1>Report Poem</h1>
+<p>Are you sure you want to report this poem?</p>
+
+<h3>{{ poem.title }}</h3>
+<p>{{ poem.body }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Report Poem</button>
+</form>
+
+<a href="{% url 'index' %}">Cancel</a>
+{% endblock %}

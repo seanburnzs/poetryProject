@@ -1,0 +1,37 @@
+{% extends 'poetry_app/base.html' %}
+{% block title %}{{ tag.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ tag.name }}</h2>
+    <p>{{ tag.description }}</p>
+    
+    <h3>Related Poems</h3>
+    <ul class="list-group">
+        {% for poem in poems %}
+            <li class="list-group-item">
+                <a href="{% url 'poetry_app:view_poem' poem.id %}">{{ poem.title }}</a> by {{ poem.author.username }}
+            </li>
+        {% empty %}
+            <li class="list-group-item">No poems available for this topic.</li>
+        {% endfor %}
+    </ul>
+    
+    <h3 class="mt-4">Educational Resources</h3>
+    <div class="row">
+        {% for resource in resources %}
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ resource.title }}</h5>
+                    <p class="card-text">{{ resource.description }}</p>
+                    <a href="{{ resource.url }}" target="_blank" class="btn btn-secondary">View Resource</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p>No educational resources available for this topic.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

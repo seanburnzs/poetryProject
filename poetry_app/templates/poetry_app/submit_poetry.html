@@ -1,0 +1,84 @@
+{% extends "poetry_app/base.html" %}
+{% load static crispy_forms_tags %}
+{% block title %}Create a Poem - Poetry App{% endblock %}
+
+{% block extra_head %}
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="container submit-poetry-container">
+    <h2>Submit a New Poem</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+
+        <!-- Title Field -->
+        <div class="mb-3">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+
+        <!-- Body Field -->
+        <div class="mb-3 poem-box-body">
+            {{ form.body.label_tag }}
+            {{ form.body }}
+        </div>
+
+        <!-- Anonymous -->
+        <div class="form-group form-check">
+            {{ form.anonymous }}
+            <label class="form-check-label" for="{{ form.anonymous.id_for_label }}">
+                {{ form.anonymous.label }}
+            </label>
+        </div>
+
+        <!-- Allow Comments -->
+        <div class="form-group form-check">
+            {{ form.allow_comments }}
+            <label class="form-check-label" for="{{ form.allow_comments.id_for_label }}">
+                {{ form.allow_comments.label }}
+            </label>
+        </div>
+
+        <!-- Status Field -->
+        <div class="mb-3 d-flex justify-content-left align-items-left">
+            <label for="{{ form.status.id_for_label }}" class="form-label me-2">Status:</label>
+            {{ form.status }}
+        </div>        
+
+        <!-- Tags Field -->
+        <div class="mb-3">
+            {{ form.tags.label_tag }}
+            {{ form.tags }}
+        </div>
+
+        <button type="submit" class="btn btn-theme-secondary">Submit Poem</button>
+        <a href="{% url 'poetry_app:discover' %}" class="btn btn-theme-primary">Cancel</a>
+    </form>
+</div>
+
+<!-- Load Summernote Overrides After form.media -->
+<link rel="stylesheet" href="{% static 'css/summernote.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- Summernote loaded via {{ form.media }} -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Select2 for tags
+            $('.select-multiple').select2({
+                placeholder: "Select tags",
+                allowClear: true,
+                tags: true, // Allow users to add new tags
+                tokenSeparators: [',', ' '],
+                dropdownParent: $('body') // Append dropdown to body to prevent clipping
+            });
+        });
+    </script>
+{% endblock %}

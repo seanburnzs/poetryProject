@@ -1,0 +1,161 @@
+{% load custom_filters %}
+<li class="list-group-item poem-box-primary">
+    <!-- Top Section -->
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Left: Profile Picture and Username -->
+        <div class="d-flex align-items-center mt-2">
+            {% if poem.anonymous %}
+                <!-- Anonymous Avatar -->
+                <img src="https://via.placeholder.com/40/cccccc/ffffff?text=A" alt="Anonymous" class="rounded-circle" width="40" height="40">
+                <span class="ms-2">Anonymous</span>
+            {% else %}
+                <a href="{% url 'poetry_app:user_profile' poem.author.username %}" class="d-flex align-items-center text-decoration-none">
+                    {% if poem.author.profile.profile_picture %}
+                        <img src="{{ poem.author.profile.profile_picture.url }}" alt="{{ poem.author.username }}" class="rounded-circle" width="40" height="40">
+                    {% else %}
+                        <!-- Default Avatar or Placeholder -->
+                        <img src="https://via.placeholder.com/40/007bff/ffffff?text={{ poem.author.username|slice:":1"|upper }}" alt="{{ poem.author.username }}" class="rounded-circle" width="40" height="40">
+                    {% endif %}
+                    <span class="ms-2">{{ poem.author.username }}</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Right: Three Dots Menu -->
+        <div class="three-dots-menu position-relative me-2">
+            <button class="three-dots-button btn btn-link p-0" aria-label="More Options">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="menu-content shadow rounded p-2">
+                <!-- Menu Options -->
+                {% if poem.author and poem.author.id == request.user.id %}
+                    <a href="{% url 'poetry_app:edit_poem' poem.id %}" class="d-block py-1">Edit</a>
+                {% endif %}
+                <button type="button"
+                        class="btn btn-link d-block text-start py-1"
+                        data-url="{% url 'poetry_app:view_poem' poem.id %}"
+                        onclick="copyLink(this.dataset.url)"
+                        aria-label="Copy Link">
+                    Copy Link
+                </button>
+                {% if user.is_authenticated %}
+                    <!-- Trigger modal for Add to Folder -->
+                    <button type="button" class="btn btn-link d-block text-start py-1" data-bs-toggle="modal" data-bs-target="#addToFolderModal{{ poem.id }}">
+                        Add to Folder
+                    </button>
+                {% endif %}
+                <a href="{% url 'poetry_app:report_poem' poem.id %}" class="d-block py-1">Report</a>
+                {% if poem.author and poem.author.id == request.user.id %}
+                    <form action="{% url 'poetry_app:delete_poem' poem.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-danger d-block text-start py-1" aria-label="Delete Poem">Delete</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Poem Content -->
+    <div class="mt-2">
+        <!-- Centered Poem Title -->
+        <h5 class="text-center">
+            <a href="{% url 'poetry_app:view_poem' poem.id %}" class="text-decoration-none">{{ poem.title }}</a>
+        </h5>
+        <!-- Indented Poem Body (truncated) -->
+        <div class="poem-body">
+            {{ poem.body|truncatewords_html:30|safe }}
+        </div>
+        <small>Posted on {{ poem.created_at|date:"M. d, Y, h:i a" }}</small>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <!-- Left: Like Button and Reaction Menu -->
+        <div class="reaction-container position-relative">
+            {% if poem.id %}
+                <!-- Like Button -->
+                <button type="button" class="like-button btn btn-link p-0 me-2" data-poem-id="{{ poem.id }}" aria-label="Like Poem">
+                    {% if 'like' in user_reactions_list|get_item:poem.id %}
+                        <i class="fas fa-heart text-danger"></i>
+                    {% else %}
+                        <i class="far fa-heart text-secondary"></i>
+                    {% endif %}
+                </button>
+
+                <!-- Display Likes Count -->
+                <span class="likes-count">{{ poem.likes_count }} Likes</span>
+
+                <!-- Selected Reactions -->
+                <div class="selected-reactions d-inline-block ms-2">
+                    {% with reactions=user_reactions_list|get_item:poem.id %}
+                        {% if reactions %}
+                            {% for reaction in reactions %}
+                                {% if reaction != 'like' %}
+                                    <i class="{{ reaction_icons|get_item:reaction }} reaction-icon" title="{{ reaction|capfirst }}"></i>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Expand Arrow -->
+                <button type="button" class="reaction-toggle btn btn-link p-0 ms-2" aria-label="More Reactions">
+                    <i class="fas fa-caret-right"></i>
+                </button>
+
+                <!-- Reaction Menu -->
+                <div class="reaction-menu hide">
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="insightful" aria-label="Insightful">
+                        <i class="fas fa-lightbulb text-warning"></i> Insightful
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="beautiful" aria-label="Beautiful">
+                        <i class="fas fa-feather text-primary"></i> Beautiful
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="inspiring" aria-label="Inspiring">
+                        <i class="fas fa-sun text-success"></i> Inspiring
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="sad" aria-label="Sad">
+                        <i class="fas fa-sad-tear text-info"></i> Sad
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="funny" aria-label="Funny">
+                        <i class="fas fa-laugh text-warning"></i> Funny
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="thoughtful" aria-label="Thoughtful">
+                        <i class="fas fa-brain text-secondary"></i> Thoughtful
+                    </button>
+                    <button type="button" class="reaction-button" data-poem-id="{{ poem.id }}" data-reaction-type="uplifting" aria-label="Uplifting">
+                        <i class="fas fa-smile-beam text-success"></i> Uplifting
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Favorite, Comment, and Share Buttons -->
+        <div>
+            <!-- Comment Button -->
+            <a href="{% url 'poetry_app:view_poem' poem.id %}#comments-section" class="btn btn-link p-0 me-2" aria-label="View Comments">
+                <i class="far fa-comment text-secondary"></i>
+            </a>
+
+            <!-- Favorite Button -->
+            {% if poem.id %}
+                <button type="button" class="star-button btn btn-link p-0 me-2" data-poem-id="{{ poem.id }}" aria-label="Favorite Poem">
+                    {% if poem.id in favorite_poem_ids %}
+                        <i class="fas fa-star text-warning"></i>
+                    {% else %}
+                        <i class="far fa-star text-secondary"></i>
+                    {% endif %}
+                </button>
+            {% endif %}
+
+            <!-- Share Button -->
+            <button type="button"
+                    class="btn btn-link p-0 me-2"
+                    data-url="{% url 'poetry_app:view_poem' poem.id %}"
+                    onclick="copyLink(this.dataset.url)"
+                    aria-label="Share Poem">
+                <i class="fas fa-share"></i>
+            </button>
+        </div>
+    </div>
+</li>

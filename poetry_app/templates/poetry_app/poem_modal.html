@@ -1,0 +1,36 @@
+{% if user.is_authenticated %}
+<div class="modal fade" id="addToFolderModal{{ poem.id }}" tabindex="-1" aria-labelledby="addToFolderModalLabel{{ poem.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{% url 'poetry_app:add_to_folder' poem.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addToFolderModalLabel{{ poem.id }}">Add "{{ poem.title }}" to Folder</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Include the form fields directly -->
+                    <div class="mb-3">
+                        <label for="id_folder_{{ poem.id }}" class="form-label">Select Folder</label>
+                        <select name="folder" id="id_folder_{{ poem.id }}" class="form-select">
+                            <option value="">Select Folder</option>
+                            {% for folder in request.user.folders.all %}
+                            <option value="{{ folder.id }}">{{ folder.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p class="text-center my-2">OR</p>
+                    <div class="mb-3">
+                        <label for="id_new_folder_name_{{ poem.id }}" class="form-label">New Folder Name</label>
+                        <input type="text" name="new_folder_name" id="id_new_folder_name_{{ poem.id }}" class="form-control" placeholder="New Folder Name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-theme-secondary">Add to Folder</button>
+                    <button type="button" class="btn btn-theme-primary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,120 @@
+{% extends 'poetry_app/base.html' %}
+{% load static %}
+{% block title %}Discover{% endblock %}
+
+{% block content %}
+<h1>Discover</h1>
+
+<!-- Tabs for Updates, Daily Prompt, Explore, Following, Friends -->
+<ul class="nav nav-tabs mb-4" id="discoverTabs" role="tablist">
+    <!-- Updates Tab 
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="updates-tab" data-bs-toggle="tab" data-bs-target="#updates" type="button" role="tab" aria-controls="updates" aria-selected="false">Updates</button>
+    </li> -->
+    <!-- Daily Prompt Tab 
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="daily-prompt-tab" data-bs-toggle="tab" data-bs-target="#daily-prompt" type="button" role="tab" aria-controls="daily-prompt" aria-selected="false">Daily Prompt</button>
+    </li> -->
+    <!-- Explore Tab -->
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="explore-tab" data-bs-toggle="tab" data-bs-target="#explore" type="button" role="tab" aria-controls="explore" aria-selected="true">Explore</button>
+    </li>
+    <!-- Following Tab -->
+    {% if user.is_authenticated %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="following-tab" data-bs-toggle="tab" data-bs-target="#following" type="button" role="tab" aria-controls="following" aria-selected="false">Following</button>
+    </li>
+    <!-- Friends Tab -->
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="friends-tab" data-bs-toggle="tab" data-bs-target="#friends" type="button" role="tab" aria-controls="friends" aria-selected="false">Friends</button>
+    </li>
+    {% else %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link disabled" type="button">Following</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link disabled" type="button">Friends</button>
+    </li>
+    {% endif %}
+</ul>
+
+<div class="tab-content" id="discoverTabsContent">
+    <!-- Updates Tab Content 
+    <div class="tab-pane fade show active" id="updates" role="tabpanel" aria-labelledby="updates-tab">
+        <div class="news-box mb-4">
+            <h2>News & Updates</h2>
+            {% for news in news_messages %}
+            <div class="news-item">
+                <h3>{{ news.title }}</h3>
+                <p>{{ news.content }}</p>
+                <small>Posted on {{ news.created_at|date:"F j, Y" }}</small>
+            </div>
+            {% empty %}
+            <p>No news at the moment.</p>
+            {% endfor %}
+        </div>
+    </div> -->
+
+    <!-- Daily Prompt Tab Content 
+    <div class="tab-pane fade" id="daily-prompt" role="tabpanel" aria-labelledby="daily-prompt-tab">
+        <div class="daily-prompt mb-4">
+            <h2>Today's Writing Prompt</h2>
+            {% if daily_prompt %}
+            <p>{{ daily_prompt.prompt_text }}</p>
+            <a href="{% url 'poetry_app:submit_poetry' %}" class="btn btn-theme-secondary">Create a Poem</a>
+            {% else %}
+            <p>No prompt for today. Check back tomorrow!</p>
+            {% endif %}
+        </div>
+    </div> -->
+
+    <!-- Explore Tab Content -->
+    <div class="tab-pane fade show active" id="explore" role="tabpanel" aria-labelledby="explore-tab">
+        <ul class="list-group">
+            {% for poem in explore_poems %}
+                {% include 'poetry_app/poem_partial.html' %}
+            {% empty %}
+                <li class="list-group-item empty-message">No poems found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if user.is_authenticated %}
+    <!-- Following Tab Content -->
+    <div class="tab-pane fade" id="following" role="tabpanel" aria-labelledby="following-tab">
+        <ul class="list-group">
+            {% for poem in following_poems %}
+                {% include 'poetry_app/poem_partial.html' %}
+            {% empty %}
+                <li class="list-group-item empty-message">You are not following anyone yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Friends Tab Content -->
+    <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+        <ul class="list-group">
+            {% for poem in friends_poems %}
+                {% include 'poetry_app/poem_partial.html' %}
+            {% empty %}
+                <li class="list-group-item empty-message">You have no mutual friends yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block modals %}
+    {% for poem in explore_poems %}
+        {% include 'poetry_app/poem_modal.html' %}
+    {% endfor %}
+    {% if user.is_authenticated %}
+        {% for poem in following_poems %}
+            {% include 'poetry_app/poem_modal.html' %}
+        {% endfor %}
+        {% for poem in friends_poems %}
+            {% include 'poetry_app/poem_modal.html' %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

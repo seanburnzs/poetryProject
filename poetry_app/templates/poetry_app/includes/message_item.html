@@ -1,0 +1,22 @@
+{% load humanize static %}
+<li id="message-{{ message.id }}" class="message-item {% if message.sender == user %}sent{% else %}received{% endif %}">
+    <!-- Unsend Button -->
+    {% if message.sender == user %}
+        <button class="unsend-button" data-id="{{ message.id }}" title="Unsend" aria-label="Unsend message">
+            &times;
+        </button>
+    {% endif %}
+
+    <!-- Profile Picture -->
+    {% if message.sender.profile.profile_picture %}
+        <img src="{{ message.sender.profile.profile_picture.url }}" alt="{{ message.sender.username }}" class="message-pfp">
+    {% else %}
+        <img src="{% static 'images/default_pfp.jpg' %}" alt="{{ message.sender.username }}" class="message-pfp">
+    {% endif %}
+
+    <!-- Message Content -->
+    <div class="message-content">
+        <!-- Message Body -->
+        <span>{{ message.body|linebreaks }}</span>
+    </div>
+</li>

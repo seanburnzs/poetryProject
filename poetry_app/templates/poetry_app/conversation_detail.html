@@ -1,0 +1,166 @@
+{% extends 'poetry_app/base.html' %}
+{% load humanize %}
+{% load static %}
+{% load custom_filters %}  <!-- load custom_filters -->
+
+{% block content %}
+<div class="chat-container">
+    <ul id="messageList" class="messages">
+        {% for pair in messages|zip_longest_filter:"1" %}
+            {% with message=pair.0 next_message=pair.1 %}
+                {% include 'poetry_app/includes/message_item.html' %}
+                {% if next_message %}
+                    {% if next_message.timestamp|timesince:message.timestamp|cut:" " > "0" %}
+                        <!-- Time Separator -->
+                        <li class="time-separator">
+                            <span>{{ next_message.timestamp|date:"M d, Y H:i" }}</span>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+    </ul>    
+    <form id="chat-message-form">
+        <textarea id="chat-message-input" placeholder="Type your message..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    const conversationId = "{{ conversation.id }}";
+    const userId = "{{ request.user.id }}";
+
+    // Dynamically set the WebSocket protocol based on the current page's protocol
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const chatSocket = new WebSocket(
+        protocol + '//' + window.location.host +
+        '/ws/messages/' + conversationId + '/'
+    );
+
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection established.');
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log('Received data from WebSocket:', data);
+
+        if (data.unsend) {
+            const messageItem = document.getElementById(`message-${data.message_id}`);
+            if (messageItem) {
+                // Remove the message from the DOM
+                messageItem.remove();
+                console.log(`Message ${data.message_id} removed from DOM.`);
+            }
+        } else if (data.message_html) {
+            const messageList = document.getElementById('messageList');
+            messageList.insertAdjacentHTML('beforeend', data.message_html);
+            console.log('New message added to DOM.');
+
+            // Scroll to the latest message
+            scrollToLatestMessage();
+        }
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly:', e);
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket encountered error:', e, 'Closing socket.');
+        chatSocket.close();
+    };
+
+    document.getElementById('chat-message-form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInput = document.getElementById('chat-message-input');
+        const message = messageInput.value;
+        if (message.trim() === '') return;
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+        console.log('Sent message via WebSocket:', message);
+        messageInput.value = '';
+        autoResizeTextarea(messageInput);
+    };
+
+    // Event delegation for unsend buttons
+    document.getElementById('messageList').addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('unsend-button')) {
+            const messageId = e.target.getAttribute('data-id');
+            if (confirm('Are you sure you want to unsend this message?')) {
+                fetch("{% url 'poetry_app:unsend_message' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({'message_id': messageId})
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'An error occurred.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log(`Successfully unsent message ${messageId}.`);
+                        // Server handles WebSocket message
+                    } else {
+                        alert(data.message || 'An error occurred.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error unsending message:', error);
+                    alert('Error unsending message: ' + error.message);
+                });
+            }
+        }
+    });
+
+    // Scroll to the latest message on page load and when new messages arrive
+    function scrollToLatestMessage() {
+        const messagesContainer = document.getElementById('messageList');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Ensure that scrollToLatestMessage is called after the messages are rendered
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(scrollToLatestMessage, 100);
+    });
+
+    // Auto-resize textarea
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+
+    const textarea = document.getElementById('chat-message-input');
+    textarea.addEventListener('input', function() {
+        autoResizeTextarea(textarea);
+    });
+</script>
+{% endblock %}

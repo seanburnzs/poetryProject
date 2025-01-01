@@ -1,0 +1,48 @@
+{% extends 'poetry_app/base.html' %}
+{% load static %}
+{% load template_filters %}
+{% block title %}Search Users - Poetry App{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Users</h2>
+    <form method="get" action="{% url 'poetry_app:search_users' %}" class="mb-4">
+        <div class="input-group">
+            {{ form.query|add_class:"form-control" }}  <!-- Add 'form-control' class to the input -->
+            <button type="submit" class="btn btn-theme-primary">Search</button>
+        </div>
+    </form>
+
+    {% if query %}
+    <h4>Results for "{{ query }}":</h4>
+    {% if results %}
+    <ul class="list-group mt-3">
+        {% for user in results %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'poetry_app:user_profile' user.username %}">{{ user.username }}</a>
+            {% if request.user.is_authenticated %}
+            {% if user.username != request.user.username %}
+                {% if user.username in followed_users %}
+                <!-- Unfollow Form -->
+                <form action="{% url 'poetry_app:unfollow_user' user.username %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Unfollow</button>
+                </form>
+                {% else %}
+                <!-- Follow Form -->
+                <form action="{% url 'poetry_app:follow_user' user.username %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Follow</button>
+                </form>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No users found matching your search criteria.</p>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'poetry_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register - Poetry App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background-color: var(--secondary); color: var(--text);">
+                    <h4 class="mb-0">Create an Account</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="submit" class="btn btn-theme-primary btn-lg">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center" style="background-color: var(--primary); color: var(--text);">
+                    <small>Already have an account? <a href="{% url 'login' %}" class="text-decoration-underline">Login here</a>.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

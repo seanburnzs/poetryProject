@@ -1,0 +1,12 @@
+{% extends 'poetry_app/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Create Folder{% endblock %}
+{% block content %}
+<h1>Create New Folder</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-theme-secondary">Create Folder</button>
+    <a href="{% url 'poetry_app:user_profile' request.user.username %}" class="btn btn-theme-primary">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'poetry_app/base.html' %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<h1>Notifications</h1>
+{% if NOTIFICATIONS_ENABLED %}
+    <ul class="list-group">
+        {% for notification in notifications %}
+            <li class="list-group-item {% if not notification.is_read %}font-weight-bold{% endif %}">
+                {% if notification.notification_type == 'like' %}
+                    {{ notification.actor.username }} liked your poem "{{ notification.poem.title }}"
+                {% elif notification.notification_type == 'comment' %}
+                    {{ notification.actor.username }} commented on your poem "{{ notification.poem.title }}"
+                {% elif notification.notification_type == 'favorite' %}
+                    {{ notification.actor.username }} favorited your poem "{{ notification.poem.title }}"
+                {% elif notification.notification_type == 'follow' %}
+                    {{ notification.actor.username }} started following you
+                {% elif notification.notification_type == 'mention' %}
+                    {{ notification.actor.username }} mentioned you in a comment on "{{ notification.poem.title }}"
+                {% elif notification.notification_type == 'prompt' %}
+                    A new writing prompt is available: "{{ notification.prompt_text }}"
+                {% endif %}
+                <small class="text-muted">{{ notification.timestamp|naturaltime }}</small>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No notifications.</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Notifications are currently disabled.</p>
+{% endif %}
+{% endblock %}

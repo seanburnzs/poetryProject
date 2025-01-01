@@ -1,0 +1,274 @@
+{% extends 'poetry_app/base.html' %}
+{% load static %}
+
+{% block title %}Profile - {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Picture -->
+        <div class="col-md-4 text-center">
+            {% if profile_user.profile.profile_picture %}
+            <img src="{{ profile_user.profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mb-3" style="max-width: 200px; border-radius: 50%;">
+            {% else %}
+            <img src="https://via.placeholder.com/200?text=No+Image" alt="Default Profile Picture" class="img-thumbnail mb-3" style="max-width: 200px; border-radius: 50%;">
+            {% endif %}
+        </div>
+        {% comment %}
+        <!-- Badges Section -->
+        {% if profile_user.profile.badges.all %}
+        <div class="badges mt-3">
+            <h5>Achievements:</h5>
+            <div class="badge-container">
+                {% for badge in profile_user.profile.badges.all %}
+                    <div class="badge" title="{{ badge.description }}">
+                        {% if badge.icon %}
+                            <img src="{{ badge.icon.url }}" alt="{{ badge.name }}">
+                        {% else %}
+                            <span>{{ badge.name }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endcomment %}
+        <!-- Profile Information -->
+        <div class="col-md-8">
+            <h2>
+                {{ profile_user.username }}
+                {% if profile_user.profile.streak %}
+                    <span class="streak-badge" title="Current Streak">
+                        🔥 {{ profile_user.profile.streak }}
+                    </span>
+                {% endif %}
+            </h2>
+            <!-- Bio Section -->
+            <p>{% if profile_user.profile.bio %}{{ profile_user.profile.bio }}{% else %}<em>No bio added yet.</em>{% endif %}</p>
+
+            <!-- Followers and Following Counts -->
+            {% if not profile_user.profile.hide_followers or profile_user == user %}
+            <p>
+                <strong>
+                    <a href="{% url 'poetry_app:followers_list' profile_user.username %}">
+                        Followers: {{ profile_user.followers_set.count }}
+                    </a>
+                </strong> |
+                <strong>
+                    <a href="{% url 'poetry_app:following_list' profile_user.username %}">
+                        Following: {{ profile_user.following_set.count }}
+                    </a>
+                </strong>
+            </p>
+            {% else %}
+            <p><em>This user's followers and following lists are hidden.</em></p>
+            {% endif %}
+
+            <!-- Follow/Unfollow Button -->
+            {% if profile_user != user %}
+            {% if user.is_authenticated %}
+                {% if is_following %}
+                    <form action="{% url 'poetry_app:unfollow_user' profile_user.username %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" aria-label="Unfollow">Unfollow</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'poetry_app:follow_user' profile_user.username %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary" aria-label="Follow">Follow</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p><a href="{% url 'poetry_app:login' %}" class="btn btn-secondary" aria-label="Login to Follow">Log in</a> to follow users.</p>
+            {% endif %}
+            {% endif %}
+
+            <!-- If viewing own profile -->
+            {% if profile_user == user %}
+            <div class="mt-3">
+                <a href="{% url 'poetry_app:edit_profile' %}" class="btn btn-edit-profile" aria-label="Edit Profile">Edit Profile</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Profile Tabs -->
+    <ul class="nav nav-tabs mt-4" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="my-poems-tab" data-bs-toggle="tab" data-bs-target="#my-poems" type="button" role="tab" aria-controls="my-poems" aria-selected="true">My Poems</button>
+        </li>
+        {% if profile_user == user %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab" aria-controls="favorites" aria-selected="false">Favorites</button>
+        </li>
+        <!-- New Folders Tab -->
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="folders-tab" data-bs-toggle="tab" data-bs-target="#folders" type="button" role="tab" aria-controls="folders" aria-selected="false">Folders</button>
+        </li>
+        {% endif %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="likes-tab" data-bs-toggle="tab" data-bs-target="#likes" type="button" role="tab" aria-controls="likes" aria-selected="false">Likes</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="profileTabsContent">
+        <!-- My Poems Tab -->
+        <div class="tab-pane fade show active" id="my-poems" role="tabpanel" aria-labelledby="my-poems-tab">
+            <div class="poem-toggle d-inline-flex mt-3" style="gap: 20px;">
+                <span class="toggle-option active" id="publishedOption" style="cursor:pointer;">Published Poems</span>
+                <span class="toggle-option" id="draftsOption" style="cursor:pointer;">Drafts</span>
+            </div>
+
+            <div id="publishedPoems" class="poem-section mt-3">
+                <ul class="list-group mb-4">
+                    {% for poem in published %}
+                        {% include 'poetry_app/poem_partial.html' %}
+                    {% empty %}
+                        <li class="list-group-item poem-box-primary">You have no published poems yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="draftsPoems" class="poem-section mt-3" style="display:none;">
+                <ul class="list-group">
+                    {% for poem in drafts %}
+                        {% include 'poetry_app/poem_partial.html' %}
+                    {% empty %}
+                        <li class="list-group-item poem-box-primary">You have no drafts.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% if profile_user == user %}
+        <!-- Favorites Tab -->
+        <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
+            <ul class="list-group">
+                {% for poem in favorite_poems %}
+                    {% include 'poetry_app/poem_partial.html' %}
+                {% empty %}
+                    <li class="list-group-item poem-box-primary">You have no favorite poems yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Folders Tab -->
+        <div class="tab-pane fade" id="folders" role="tabpanel" aria-labelledby="folders-tab">
+            <div class="mb-3">
+                <a href="{% url 'poetry_app:create_folder' %}" class="btn btn-theme-primary">Create New Folder</a>
+            </div>
+            {% if folders %}
+            <div class="row">
+                {% for folder in folders %}
+                <div class="col-md-4 mb-4">
+                    <div class="folder-card card h-100">
+                        <div class="card-body position-relative">
+                            <!-- Folder Title -->
+                            <h5 class="card-title">{{ folder.name }}</h5>
+                            <!-- Three Dots Menu for Folder -->
+                            <button class="three-dots-button position-absolute top-0 end-0" aria-label="More Options">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <div class="menu-content">
+                                <!-- Folder Menu Options -->
+                                <form action="{% url 'poetry_app:delete_folder' folder.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link text-danger">Delete Folder</button>
+                                </form>
+                            </div>
+                            <!-- Poems in Folder -->
+                            <ul class="list-group mt-3">
+                                {% for poem in folder.poems.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'poetry_app:view_poem' poem.id %}">{{ poem.title }}</a>
+                                    <!-- Remove from Folder Option -->
+                                    <form action="{% url 'poetry_app:remove_from_folder' folder.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="poem_id" value="{{ poem.id }}">
+                                        <button type="submit" class="remove-button btn btn-link p-0 m-0" aria-label="Remove from Folder">
+                                            <i class="fas fa-times text-danger"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item poem-box-primary">No poems in this folder.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>You have no folders yet.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Likes Tab -->
+        <div class="tab-pane fade" id="likes" role="tabpanel" aria-labelledby="likes-tab">
+            <ul class="list-group">
+                {% for poem in liked_poems %}
+                    {% include 'poetry_app/poem_partial.html' %}
+                {% empty %}
+                    <li class="list-group-item poem-box-primary">You have not liked any poems yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+    {% for poem in my_poems %}
+        {% include 'poetry_app/poem_modal.html' %}
+    {% endfor %}
+    {% for poem in favorite_poems %}
+        {% include 'poetry_app/poem_modal.html' %}
+    {% endfor %}
+    {% for poem in liked_poems %}
+        {% include 'poetry_app/poem_modal.html' %}
+    {% endfor %}
+    {% for folder in folders %}
+        {% for poem in folder.poems.all %}
+            {% include 'poetry_app/poem_modal.html' %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .toggle-option {
+        color: #999;
+        font-weight: normal;
+    }
+    .toggle-option.active {
+        color: #000;
+        font-weight: bold;
+    }
+    .toggle-option:hover {
+        text-decoration: underline;
+    }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const publishedOption = document.getElementById('publishedOption');
+    const draftsOption = document.getElementById('draftsOption');
+    const publishedPoems = document.getElementById('publishedPoems');
+    const draftsPoems = document.getElementById('draftsPoems');
+
+    publishedOption.addEventListener('click', function() {
+        publishedOption.classList.add('active');
+        draftsOption.classList.remove('active');
+        publishedPoems.style.display = 'block';
+        draftsPoems.style.display = 'none';
+    });
+
+    draftsOption.addEventListener('click', function() {
+        draftsOption.classList.add('active');
+        publishedOption.classList.remove('active');
+        draftsPoems.style.display = 'block';
+        publishedPoems.style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

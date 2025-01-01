@@ -1,0 +1,26 @@
+{% extends 'poetry_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Preferences{% endblock %}
+
+{% block content %}
+<h1>User Preferences</h1>
+
+<form action="{% url 'poetry_app:preferences' %}" method="post">
+    {% csrf_token %}
+
+    <!-- Hide Followers and Following Lists
+    <div class="form-group form-check" style="margin-left: 10px;">
+        {{ form.hide_followers }}
+        <label class="form-check-label" for="{{ form.hide_followers.id_for_label }}">
+            {{ form.hide_followers.label }}
+        </label>
+    </div>  -->
+
+    <button type="submit" class="btn btn-theme-secondary mt-3">Save Preferences</button>
+    <a href="{% url 'poetry_app:user_profile' request.user.username %}" class="btn btn-theme-primary mt-3">Cancel</a>
+</form>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

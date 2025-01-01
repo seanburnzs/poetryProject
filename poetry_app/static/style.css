@@ -1,0 +1,1277 @@
+/* EB Garamond */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&display=swap');
+
+/* Theme Variables */
+:root[data-theme="light"] {
+    --text: #000000;
+    --background: #FFFFFF;
+    --background2: #F5F5F5;
+    --primary: #E0E0E0;
+    --secondary: #C0C0C0;
+    --accent: #E60023;
+}
+
+:root[data-theme="dark"] {
+    --text: #FFFFFF;
+    --background: #000000;
+    --background2: #1C1C1C;
+    --primary: #333333;
+    --secondary: #4F4F4F;
+    --accent: #E60023;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+    font-family: 'EB Garamond', serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary);
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1.44;
+    text-align: left;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Remove old sidebar references */
+.sidebar, .background-layer, .main-box {
+    display: none !important;
+}
+
+/* Centered Content Container */
+.content-center {
+    max-width: 1200px; 
+    width: 100%;
+    margin: 0 auto; 
+    padding: 20px;
+    flex: 1; 
+    box-sizing: border-box;
+}
+
+/* Loader Styles */
+.loader {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+    line-height: 1.2;
+}
+
+.header-buttons .btn {
+    margin-left: 10px;
+}
+
+/* Links & Buttons */
+a {
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+a:hover {
+    transform: scale(1);
+}
+
+button {
+    background-color: var(--primary);
+    color: var(--text);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+button:hover {
+    background-color: var(--accent);
+    color: var(--text);
+    transform: scale(1);
+}
+
+.button-link {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: var(--primary);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.button-link:hover {
+    background-color: var(--accent);
+    color: var(--text);
+    transform: scale(1);
+}
+
+/* Outline Buttons */
+.btn-outline-secondary {
+    background-color: var(--primary);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+.btn-outline-secondary:hover {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+/* Navigation Tabs Styling */
+.nav-tabs .nav-link {
+    background-color: var(--primary);
+    color: var(--text);
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    line-height: 1.4;
+    margin-right: 3px;
+    margin-bottom: 3px;
+}
+.nav-tabs .nav-link.active {
+    background-color: var(--background) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary);
+}
+.nav-tabs .nav-link:hover {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+.nav-tabs {
+    border-bottom: none;
+}
+
+/* Footer Styles */
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 5px 0;
+    background-color: var(--primary);
+    color: var(--secondary);
+    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1.1rem;
+    margin-top: auto;
+    font-weight: bold;
+}
+footer a {
+    color: var(--secondary);
+}
+footer a:hover {
+    text-decoration: underline;
+    color: var(--secondary);
+}
+
+/* Hamburger Menu Container */
+.hamburger-menu {
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+    right: 0;
+    top: 110%;
+    background-color: var(--background);
+    border: 1px solid var(--text);
+}
+.hamburger-menu ul {
+    color: var(--text);
+    background-color: var(--background);
+    margin: 0;
+    padding: 0;
+}
+.hamburger-menu li {
+    list-style: none;
+}
+.hamburger-menu a,
+.hamburger-menu button {
+    font-size: 1rem;
+    width: 100%;
+    text-align: left;
+    padding: 0px 0px;
+    display: block;
+    color: var(--text);
+    border: none;
+    background: none;
+}
+.hamburger-menu a:hover,
+.hamburger-menu button:hover {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+/* Animated Hamburger Icon (Uiverse snippet by talhabangyal) */
+.hamburger {
+    cursor: pointer;
+    margin-right: 10px; /* space before other icons */
+}
+.hamburger input {
+    display: none;
+}
+.hamburger svg {
+    height: 2em; /* size of the SVG */
+    transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.line {
+    fill: none;
+    stroke: black;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 3;
+    transition:
+        stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
+        stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.line-top-bottom {
+    stroke-dasharray: 12 63;
+}
+
+.hamburger input:checked + svg {
+    transform: rotate(-45deg);
+}
+.hamburger input:checked + svg .line-top-bottom {
+    stroke-dasharray: 20 300;
+    stroke-dashoffset: -32.42;
+}
+
+/* Light/Dark Mode Toggle (bottom-right) */
+.light-dark-toggle {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1001; /* Above other elements */
+}
+.switch {
+    display: flex;
+    align-items: center;
+    --width-of-switch: 3em;
+    --height-of-switch: 1.7em;
+    --size-of-icon: 1.4em;
+    --slider-offset: 0.3em;
+    position: relative;
+    width: var(--width-of-switch);
+    height: var(--height-of-switch);
+    cursor: pointer;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f4f4f5;
+    transition: 0.4s;
+    border-radius: 30px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: var(--size-of-icon);
+    width: var(--size-of-icon);
+    border-radius: 20px;
+    left: var(--slider-offset);
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(40deg, #ff0080, #ff8c00 70%);
+    transition: 0.4s;
+}
+.switch input:checked + .slider {
+    background-color: #303136;
+}
+.switch input:checked + .slider:before {
+    left: calc(100% - (var(--size-of-icon) + var(--slider-offset)));
+    background: #303136;
+    box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
+}
+
+/* My Profile & Settings Buttons (matching color scheme) */
+.button-profile,
+.button-settings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    gap: 8px;
+    height: 36px;
+    width: 120px;
+    border: none;
+    background: #5e41de33;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 17px;
+    letter-spacing: 1px;
+    text-align: center;
+    margin: 2px 0;
+}
+.button-profile svg,
+.button-settings svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+}
+.button-profile:hover,
+.button-settings:hover {
+    background: #5e41de4d;
+}
+.button-profile:hover svg,
+.button-settings:hover svg {
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Logout Button */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 40px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: 0.3s;
+    background-color: rgb(255, 65, 65);
+    margin: 4px 0;  /* vertical spacing */
+}
+.logout-btn .sign {
+    width: 100%;
+    transition-duration: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.logout-btn .sign svg {
+    width: 17px;
+}
+.logout-btn .sign svg path {
+    fill: var(--text);
+}
+.logout-btn .text {
+    font-family: sans-serif;
+    font-size: 17px;
+    letter-spacing: 1px;
+    position: absolute;
+    bottom: 20%;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: var(--text);
+    transition-duration: 0.3s;
+    white-space: nowrap;
+}
+.logout-btn:hover {
+    width: 100%;
+    border-radius: 0px;
+    transition-duration: 0.3s;
+}
+.logout-btn:hover .sign {
+    width: 0%;
+    transition-duration: 0.3s;
+    padding-left: 0px;
+}
+.logout-btn:hover .text {
+    opacity: 1;
+    width: 76%;
+    transition-duration: 0.3s;
+    padding-right: 10px;
+}
+.logout-btn:active {
+    transform: translate(2px, 2px);
+}
+
+/* Smooth Transitions */
+button, a {
+    transition: all 0.3s ease;
+}
+button:hover, a:hover {
+    transform: scale(1);
+}
+
+/* Three Dots Button */
+.three-dots-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text); /* Three dots button color based on theme */
+    position: relative;
+    z-index: 2;
+}
+
+/* Dropdown Menu for Poem Options */
+.menu-content {
+    position: absolute;
+    background-color: var(--primary); /* Dropdown background based on theme */
+    border: 1px solid var(--secondary); /* Dropdown border based on theme */
+    display: none; /* Hidden by default */
+    z-index: 2;
+    right: 140%;
+    top: 25%;
+    min-width: 150px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0;
+}
+
+.menu-content.visible {
+    display: block;
+}
+
+/* Styling for Buttons Inside the Menu */
+.menu-content form button,
+.menu-content button,
+.menu-content a {
+    background: none;
+    color: var(--text); /* Menu button text color based on theme */
+    border: none;
+    text-align: left;
+    padding: 8px 15px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.menu-content form button:hover,
+.menu-content button:hover,
+.menu-content a:hover {
+    background-color: var(--background); /* Menu button hover background based on theme */
+    color: var(--text);
+}
+
+/* Star Button for Favoriting */
+.star-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0;
+}
+
+.star-button img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.favorited {
+    filter: brightness(1.5); /* Bright star for favorited poems */
+}
+
+.not-favorited {
+    filter: brightness(0.5); /* Dim star for non-favorited poems */
+}
+
+.loader-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Footer Styles */
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 5px 0; /* small footer */
+    background-color: var(--primary); /* Footer background based on theme */
+    color: var(--secondary); /* Footer text color based on theme */
+    position: relative;
+    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1.1rem; /* Smaller font size */
+    margin-top: auto; /* Push footer to the bottom */
+    font-weight: bold; /* Bold text */
+}
+
+footer a {
+    color: var(--secondary); /* Footer link color based on theme */
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+    color: var(--secondary);
+}
+
+/* Hover Effects for Icons */
+.star-button img:hover,
+.three-dots-button:hover {
+    filter: none;
+}
+
+/* Keyframes for Snap Animation */
+@keyframes snap {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.snap-animation {
+    animation: snap 0.3s ease-in-out;
+}
+
+/* Smooth Transition for Buttons and Links */
+button, a {
+    transition: all 0.3s ease;
+}
+
+button:hover, a:hover {
+    transform: scale(1);
+}
+
+/* Poem List Layout */
+.poem-list {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.poem-list small {
+    color: var(--text); /* Poem list small text color based on theme */
+    display: block;
+    margin-top: 10px;
+}
+
+/* Styling for Consistent Alignment */
+header, main, footer {
+    text-align: left; /* Consistent text alignment */
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid var(--secondary);
+    border-radius: 5px;
+    background-color: var(--primary);
+    color: var(--text);
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+    border: 2px solid var(--secondary);
+    outline: none;
+}
+
+/* Top-Right Buttons Container */
+.top-right-buttons {
+    position: fixed;
+    color: #179d0d;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .top-right-buttons {
+        top: 5px;
+        right: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-right-buttons {
+        flex-direction: column;
+        top: 5px;
+        right: 5px;
+    }
+
+    .top-right-buttons .btn {
+        margin: 2px 0;
+    }
+}
+
+.top-right-buttons {
+    z-index: 1000;
+}
+
+.btn-theme-primary {
+    background-color: var(--primary);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+.btn-theme-primary:hover {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+/* Secondary Themed Button (Optional) */
+.btn-theme-secondary {
+    background-color: var(--primary);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+.btn-theme-secondary:hover {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+.poem-box-primary {
+    background-color: var(--primary);
+    color: var(--text);
+    border: none;
+    margin-bottom: 20px;
+    padding: 15px;
+    position: relative;
+    z-index: 1; /* Above absolutely positioned children */
+    overflow: hidden; /* Prevent content from spilling out */
+}
+
+.poem-box-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--secondary);
+    border-radius: 5px;
+    pointer-events: none; /* Ensures it doesn't block interactions */
+    box-sizing: border-box;
+    z-index: 2; /* Places border above content */
+}
+
+.poem-body {
+    text-indent: 0; /* Poem body indent */
+    margin-bottom: 0;
+}
+
+.clearable-file-input p {
+    color: var(--text) !important;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.clearable-file-input label {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+/* currently */
+.clearable-file-input p:first-of-type {
+    margin-bottom: 5px;
+}
+
+/* Accordion Styles */
+.accordion-button {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--accent);
+    color: var(--secondary);
+}
+
+.accordion-item {
+    border: none;
+}
+
+.accordion-body {
+    background-color: var(--primary);
+}
+
+.folder-card {
+    border-radius: 10px;
+    background-color: var(--secondary);
+    color: var(--text);
+    transition: transform 0.2s;
+    overflow: hidden;
+}
+
+.folder-card:hover {
+    transform: scale(1.02);
+}
+
+.folder-card .card-body {
+    position: relative;
+}
+
+.folder-card .three-dots-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+}
+
+.folder-card .menu-content {
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    background-color: var(--background);
+    border: 1px solid var(--accent);
+    display: none;
+    z-index: 1000;
+    min-width: 150px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.folder-card .menu-content.visible {
+    display: block;
+}
+
+.folder-card .menu-content form button {
+    background: none;
+    color: var(--text);
+    border: none;
+    text-align: left;
+    padding: 8px 15px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.folder-card .menu-content form button:hover {
+    background-color: var(--accent);
+    color: var(--secondary);
+}
+
+/* Adjust list group inside folder card */
+.folder-card .list-group-item {
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem 0;
+}
+
+.folder-card .list-group-item a {
+    color: var(--text);
+}
+
+.folder-card .list-group-item a:hover {
+    text-decoration: underline;
+}
+
+.folder-card .list-group-item .btn {
+    font-size: 0.8rem;
+}
+
+.remove-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.remove-button .fa-times {
+    font-size: 1rem;
+    color: #dc3545; /* Bootstrap's red color */
+}
+
+.remove-button .fa-times:hover {
+    color: #bd2130; /* Darker red on hover */
+}
+
+/* modals on top */
+.modal {
+    z-index: 1050;
+}
+
+.modal-backdrop {
+    z-index: 1040;
+}
+
+/* Adjust padding inside list-group-item */
+.list-group-item {
+    padding: 0.5rem 1rem;
+    position: relative;
+    overflow: visible;
+}
+
+/* Profile picture and username spacing */
+.list-group-item .d-flex.align-items-center {
+    margin-top: 0; /* Reset any margin-top */
+    margin-left: 0; /* Reset any margin-left */
+}
+
+.list-group-item .d-flex.align-items-center.ms-3 {
+    margin-left: 1rem; /* Same distance from the left */
+}
+
+.list-group-item .d-flex.align-items-center.mt-2 {
+    margin-top: 0.5rem; /* Same distance from the top */
+}
+
+.input-group .form-control,
+.input-group .btn {
+    height: 50px;
+    vertical-align: middle; /* Input field adjusts to the button height */
+}
+
+.streak-badge {
+    font-size: 1.2rem;
+    margin-left: 10px;
+    color: orange;
+}
+
+/* Reaction Menu */
+.reaction-menu {
+    background-color: var(--primary);
+    border: 2px solid var(--secondary);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 2;  /* Ensure it appears above other elements */
+    left: 105%;
+    bottom: -500%;
+    transform: translateY(-50%);
+    display: none;
+    white-space: nowrap;
+    position: absolute;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Show the Reaction Menu */
+.reaction-menu.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+/* Hide Reaction Menu when not active */
+.reaction-menu.hide {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.95);
+}
+
+.reaction-button {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text);
+    background-color: var(--primary);
+}
+
+.reaction-button:hover {
+    background-color: var(--background);
+    color: var(--text);
+}
+
+.reaction-button i {
+    margin-right: 5px;
+}
+
+/* Badges */
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.badge {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.badge img {
+    width: 40px;
+    height: 40px;
+}
+
+.badge span {
+    display: inline-block;
+    background-color: var(--background);
+    color: var(--background);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.reaction-icon {
+    margin-left: 5px;
+    font-size: 1.2rem;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    box-sizing: border-box;
+    border: none;
+    font-size: 100%;
+    margin-top: 5px;
+    margin-left: 5px;
+    padding: 0;
+    max-width: 100%;
+    resize: none;
+    min-height: 25px;
+    vertical-align: bottom;
+    font-family: sans-serif;
+    overflow: visible;
+    word-break: keep-all;
+    z-index: 100000 !important;
+}
+
+.card .ratio iframe {
+    border-radius: 0.25rem;
+}
+
+/* Add hover effects to cards */
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.likes-count {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin-left: 5px;
+}
+
+/* Edit Profile Button Styling */
+.btn-edit-profile {
+    background-color: var(--primary);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-edit-profile:hover {
+    background-color: var(--background);
+    color: var(--text);
+    border: 2px solid var(--secondary);
+}
+
+/* Empty Message Styling */
+.empty-message {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary) !important;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* Override Bootstrap's form-control styles */
+.form-control {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary) !important;
+}
+
+/* Adjust placeholder color */
+.form-control::placeholder {
+    color: var(--text) !important;
+    opacity: 0.7;
+}
+
+/* Focus State */
+.form-control:focus {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border-color: var(--secondary) !important;
+    box-shadow: none; /* Remove default focus shadow */
+}
+
+/* Select2 Override */
+.select2-container .select2-selection--multiple {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary) !important;
+    border-radius: 5px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--secondary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--accent) !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--text) !important;
+    cursor: pointer;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--accent) !important;
+    color: var(--text) !important;
+}
+
+/* 1. Style for the "Currently" text */
+.clearable-file-input p {
+    color: var(--text) !important;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+/* 2. Styling the Custom "Choose File" Button */
+.clearable-file-input .btn-theme-primary {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary) !important;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.clearable-file-input .btn-theme-primary:hover {
+    background-color: var(--accent) !important;
+    color: var(--text) !important;
+}
+
+.select2-container .select2-selection--multiple {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--secondary) !important;
+    border-radius: 5px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--secondary) !important;
+    color: var(--text) !important;
+    border: 2px solid var(--accent) !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--text) !important;
+    cursor: pointer;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--accent) !important;
+    color: var(--text) !important;
+}
+
+.current-pfp {
+    max-width: 150px;
+    border-radius: 15px;
+    border: 2px solid var(--secondary);
+    margin-bottom: 10px; /* Adds spacing below the image */
+}
+
+/* 5. Style for the "Clear" Checkbox */
+.form-check-input {
+    margin-top: 4px;
+    background: var(--primary);
+    border: 2px solid var(--secondary);
+}
+
+.form-check-label {
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+}
+
+.select2-container--default .select2-results__option {
+    background-color: var(--primary) !important;
+    color: var(--text) !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--background) !important;
+    color: var(--text) !important;
+}
+
+.select2-container--default .select2-results__option--highlighted {
+    background-color: var(--background) !important;
+    color: var(--text) !important;
+}
+
+.poem-box-view {
+    background-color: var(--primary);
+    color: var(--text);
+    border: none;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    position: relative;
+    z-index: 1; /* Above absolutely positioned children */
+    overflow: visible; /* Prevents content from spilling out */
+}
+
+.poem-box-view::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 3px;
+    pointer-events: none; /* Ensures it doesn't block interactions */
+    box-sizing: border-box;
+    z-index: 2; /* Places border above content */
+}
+
+/* Comment Item Styling */
+.comment-item {
+    background-color: var(--primary);
+    color: var(--text);
+    border: none;
+    margin-bottom: 20px;
+    padding: 15px;
+    position: relative;
+    z-index: 1;
+    overflow: visible; /* Prevents clipping */
+}
+
+.comment-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--secondary);
+    border-radius: 5px;
+    pointer-events: none;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+/* Ensure parent container does not clip comments */
+.comments-section ul.list-group {
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+}
+
+/* Maintain consistent spacing */
+.comment-item .comment-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-item .timestamp {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+.comment-item .reply-link {
+    color: var(--text);
+    font-weight: bold;
+}
+
+.comment-item .reply-link:hover {
+    color: var(--background);
+    text-decoration: underline;
+}
+
+/* Nested Replies Styling */
+.comment-item .replies .comment-item {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.comment-item .replies .comment-body {
+    background-color: var(--secondary);
+}
+
+/* Ensure Three Dots Menu Does Not Overlap */
+.comment-item .three-dots-menu {
+    z-index: 3;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .comment-item .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .comment-item .comment-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .comment-item .reply-link {
+        margin-top: 5px;
+    }
+}
+
+.comment-item .timestamp {
+    font-family: 'EB Garamond', serif;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.toggle-replies{
+    font-family: 'EB Garamond', serif;
+    color: var(--text);
+    font-size: 0.8rem;
+}

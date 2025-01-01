@@ -1,0 +1,14 @@
+{% extends 'poetry_app/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Start Conversation{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Start New Conversation</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-theme-primary">Start Conversation</button>
+        <a href="{% url 'poetry_app:conversations_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

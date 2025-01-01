@@ -1,0 +1,206 @@
+/* Chat Container */
+.chat-container {
+    background-color: var(--background);
+    color: var(--text);
+    padding: 10px;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Messages List */
+.chat-container .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Message Items */
+.chat-container .messages .message-item {
+    display: flex;
+    align-items: center; /* Align items to the bottom */
+    position: relative;
+    margin-bottom: 0;
+}
+
+.chat-container .messages .message-item.sent {
+    justify-content: flex-end;
+}
+
+.chat-container .messages .message-item.received {
+    justify-content: flex-start;
+}
+
+/* Message Content */
+.chat-container .messages .message-item .message-content {
+    background-color: var(--primary);
+    color: var(--text);
+    border-radius: 20px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center; /* Center text vertically */
+    justify-content: center; /* Center text horizontally */
+    max-width: 70%; /* Adjusted max-width for better fit */
+    word-wrap: break-word;
+    position: relative;
+    text-align: center;
+    line-height: 1.44;
+    margin: 2px;
+}
+
+/* Remove default margins from span and p tags inside message content */
+.chat-container .messages .message-item .message-content span,
+.chat-container .messages .message-item .message-content p {
+    margin: 0;
+}
+
+.chat-container .messages .message-item .message-content p {
+    margin: 0;
+}
+
+/* Sent Messages Specific Styles */
+.chat-container .messages .message-item.sent .message-content {
+    background-color: var(--accent);
+    color: var(--text);
+}
+
+/* Unsend Button */
+.chat-container .messages .message-item .unsend-button {
+    background: transparent;
+    border: none;
+    color: red; /* THE BIG RED BUTTON */
+    cursor: pointer;
+    font-size: 0.8rem; /* Smaller size */
+    position: absolute;
+    top: 30%;
+    transform: translateY(-50%); /* Offset to center the button vertically */
+    right: 45px;
+    opacity: 0; /* Start invisible */
+    transition: opacity 0.2s ease-in-out; /* Smooth transition */
+    padding: 0; /* Remove default padding */
+    line-height: 1.44; /* Ensure no extra height */
+    z-index: 1;
+}
+
+.chat-container .messages .message-item:hover .unsend-button {
+    opacity: 1; /* Show when hovering over the message item */
+}
+
+/* Remove hover effects */
+.chat-container .messages .message-item .unsend-button:hover {
+    color: red; /* Keep color same on hover */
+    box-shadow: none; /* Remove shadow effect */
+}
+
+/* Input Area */
+.chat-container #chat-message-form {
+    display: flex;
+    margin-top: 10px;
+}
+
+.chat-container #chat-message-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 1px solid var(--secondary);
+    background-color: var(--background);
+    color: var(--text);
+    resize: none; /* Prevent manual resizing */
+    text-align: start;
+    height: 60px;
+}
+
+.chat-container #chat-message-input::placeholder {
+    color: var(--secondary);
+}
+
+.chat-container #chat-message-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.chat-container #chat-message-form button {
+    background-color: var(--accent);
+    color: var(--text);
+    border: none;
+    padding: 0 15px;
+    margin-left: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    height: 60px;
+}
+
+.chat-container #chat-message-form button:hover {
+    background-color: var(--primary);
+}
+
+/* Profile Pictures */
+.chat-container .messages .message-item .message-pfp {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 8px;
+    flex-shrink: 0; /* Prevent shrinking */
+    align-self: center; /* Align to the bottom */
+}
+
+/* Align profile pictures with messages */
+.chat-container .messages .message-item.sent .message-pfp {
+    order: 2; /* Place pfp after message for sent messages */
+}
+
+.chat-container .messages .message-item.received .message-pfp {
+    order: 0; /* Place pfp before message for received messages */
+}
+
+.chat-container .messages .message-item .message-content {
+    order: 1; /* Ensure message content is between pfps and unsend button */
+}
+
+/* Time Separator */
+.chat-container .messages .time-separator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.chat-container .messages .time-separator span {
+    background-color: var(--secondary);
+    color: var(--text);
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar Styling */
+.chat-container .messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container .messages::-webkit-scrollbar-track {
+    background: var(--background);
+    border-radius: 4px;
+}
+
+.chat-container .messages::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 4px;
+}
+
+.chat-container .messages::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* Override padding and margin for message items */
+.chat-container .messages .message-item {
+    padding: 0; /* Remove padding */
+    margin-bottom: 5px; /* Remove margin-bottom */
+    border-bottom: none; /* Remove bottom border */
+}
