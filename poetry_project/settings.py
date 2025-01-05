@@ -169,7 +169,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'poetry_app' / 'static',
-    BASE_DIR / 'venv' / 'Lib' / 'site-packages' / 'django_summernote' / 'static' / 'summernote',
 ]
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
