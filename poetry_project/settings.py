@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'django_ckeditor_5',
     'reversion',
     'widget_tweaks',
-    'storages',  # Required if using AWS S3 for static/media files
+    'storages',
 ]
 
 # Security settings for HTTPS
@@ -65,7 +65,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_HSTS_SECONDS = 3600  # Adjust as needed
+SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = 'DENY'
@@ -110,7 +110,7 @@ ROOT_URLCONF = 'poetry_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Add global templates directory if needed
+        'DIRS': [BASE_DIR / 'templates'],  # global templates directory
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
