@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import environ
+import os  # Added for BASE_DIR usage in logging
 
 # Initialize environment variables
 env = environ.Env(
@@ -223,33 +224,28 @@ LOGGING = {
         },
     },
     'handlers': {
-        'console': {
+        'console': {  # Console handler replaces file handler
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/django.log',
-            'formatter': 'verbose',
-        },
     },
-    'root': {
-        'handlers': ['console', 'file'],
+    'root': {  # Root logger uses only console handler
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
+        'django': {  # Django logger uses only console handler
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
-        'channels': {
-            'handlers': ['console', 'file'],
+        'channels': {  # Channels logger uses only console handler
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
-        'poetry_app': {
-            'handlers': ['console', 'file'],
+        'poetry_app': {  # console handler
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
