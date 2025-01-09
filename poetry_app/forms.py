@@ -100,8 +100,18 @@ class ProfileUpdateForm(forms.ModelForm):
             validate_file_size(picture)
         return picture
 
+    def save(self, commit=True):
+        """SAVE PFP."""
+        profile = super().save(commit=False)
+        if 'profile_picture' in self.files:
+            profile.profile_picture = self.files['profile_picture']
+        if commit:
+            profile.save()
+        return profile
+
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+
 
 class AdvancedSearchForm(forms.Form):
     query = forms.CharField(required=False, label='Keyword')
