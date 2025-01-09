@@ -95,11 +95,12 @@ class ProfileUpdateForm(forms.ModelForm):
         }
 
     def clean_profile_picture(self):
-        picture = self.cleaned_data.get('profile_picture')
-        if picture:
-            validate_file_size(picture)
+        if "profile_picture" in self.changed_data:
+            picture = self.cleaned_data.get('profile_picture')
+            if picture:
+                validate_file_size(picture)
         return picture
-
+    
     def save(self, commit=True):
         """SAVE PFP."""
         profile = super().save(commit=False)
