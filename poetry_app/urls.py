@@ -10,7 +10,6 @@ urlpatterns = [
     # Home and Authentication
     path('', views.discover, name='discover'),
     path('register/', views.register, name='register'),
-    path('learn/', views.learn, name='learn'),
 
     # Poetry Management
     path('submit/', views.submit_poetry, name='submit_poetry'),
@@ -40,10 +39,6 @@ urlpatterns = [
     path('read/<str:tag_name>/', views.filter_by_tag, name='filter_by_tag'),
     path('read/', views.read_poems, name='read'),
     path('preferences/', views.preferences, name='preferences'),
-
-    # Autocomplete (not implemented)
-    path('autocomplete/title/', views.autocomplete_title, name='autocomplete_title'),
-    path('autocomplete/body/', views.autocomplete_body, name='autocomplete_body'),
     
     # Likes
     path('toggle_like_ajax/<int:poem_id>/', views.toggle_like_ajax, name='toggle_like_ajax'),
@@ -78,11 +73,6 @@ urlpatterns = [
         
     # Reactions
     path('poem/<int:poem_id>/add_reaction/', views.add_reaction_to_poem, name='add_reaction_to_poem'),
-
-    # Educational Resources
-    path('education/', views.EducationListView.as_view(), name='education_list'),
-    path('education/<int:pk>/', views.EducationDetailView.as_view(), name='education_detail'),
-    path('learning-paths/', views.LearningPathListView.as_view(), name='learning_path_list'),
 ]
 
 if settings.NOTIFICATIONS_ENABLED:
