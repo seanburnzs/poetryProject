@@ -164,7 +164,7 @@ AWS_QUERYSTRING_AUTH = False
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Serve media from S3
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.us-east-2.amazonaws.com/"
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
