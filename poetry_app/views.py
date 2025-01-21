@@ -314,7 +314,8 @@ def edit_profile(request):
             messages.success(request, "Your profile has been updated.")
             return redirect('poetry_app:user_profile', username=request.user.username)
         else:
-            print(form.errors)
+            logger.error(f"ProfileUpdateForm errors: {form.errors}")
+            messages.error(request, "There was an error updating your profile. Please check the form below.")
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'poetry_app/edit_profile.html', {'form': form})

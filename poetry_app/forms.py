@@ -103,8 +103,7 @@ class ProfileUpdateForm(forms.ModelForm):
     def save(self, commit=True):
         """SAVE PFP."""
         profile = super().save(commit=False)
-        if 'profile_picture' in self.files:
-            profile.profile_picture = self.files['profile_picture']
+        profile.profile_picture = self.cleaned_data.get('profile_picture')
         if commit:
             profile.save()
         return profile
