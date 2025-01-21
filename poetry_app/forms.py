@@ -91,7 +91,7 @@ class ProfileUpdateForm(forms.ModelForm):
                 'cols': 40, 
                 'placeholder': 'Tell us about yourself...'
             }),
-            'profile_picture': forms.FileInput(attrs={'class': 'd-none'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
     def clean_profile_picture(self):

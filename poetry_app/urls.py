@@ -74,7 +74,6 @@ urlpatterns = [
     # Reactions
     path('poem/<int:poem_id>/add_reaction/', views.add_reaction_to_poem, name='add_reaction_to_poem'),
 
-    path('s3-test/', views.s3_test_view, name='s3_test_view'),
 ]
 
 if settings.NOTIFICATIONS_ENABLED:

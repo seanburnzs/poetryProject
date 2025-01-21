@@ -36,10 +36,6 @@ from collections import defaultdict
 from django.views.generic import ListView, DetailView
 from django.db import IntegrityError
 
-#test
-from storages.backends.s3boto3 import S3Boto3Storage
-from django.http import HttpResponse
-
 def index(request):
     # Featured Poem
     featured_poem = Poetry.objects.filter(status='published').order_by('?').first()
@@ -1417,9 +1413,3 @@ def learn(request):
         'query': query,
     }
     return render(request, 'poetry_app/learn.html', context)
-
-#tests
-def s3_test_view(request):
-    storage = S3Boto3Storage()
-    exists = storage.exists('test-file')  # triggers S3 call
-    return HttpResponse(f"S3 call result: {exists}")

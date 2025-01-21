@@ -34,25 +34,21 @@
 
         <!-- Profile Picture Section -->
         <div class="mb-4">
+            <!-- If user already has a profile picture, show it and a Clear button -->
             {% if user.profile.profile_picture %}
-                <div class="d-flex flex-column align-items-start">
-                    <img src="{{ user.profile.profile_picture.url }}" alt="Current Profile Picture" class="current-pfp mb-2">
+                <div class="d-flex flex-column align-items-start mb-3">
+                    <img src="{{ user.profile.profile_picture.url }}" alt="Current Profile Picture"
+                        class="current-pfp mb-2" style="max-width: 150px; border-radius: 50%;">
                     
                     <!-- Clear Button -->
-                    <button type="button" id="clear-pfp" class="btn btn-theme-primary mb-2">Clear</button>
-                    
-                    <!-- Change Button -->
-                    <label for="{{ form.profile_picture.id_for_label }}" class="btn btn-theme-secondary">Change</label>
-                    {{ form.profile_picture }}
-                </div>
-            {% else %}
-                <!-- Change Button Only -->
-                <div class="d-flex flex-column align-items-start">
-                    <label for="{{ form.profile_picture.id_for_label }}" class="btn btn-theme-primary mb-2">Choose File</label>
-                    {{ form.profile_picture }}
+                    <button type="button" id="clear-pfp" class="btn btn-theme-primary mb-2">Clear</button> 
                 </div>
             {% endif %}
-            
+
+            <!-- Always show the file input in normal form style -->
+            <label for="{{ form.profile_picture.id_for_label }}" class="btn btn-theme-secondary">Select a New Picture</label> 
+            {{ form.profile_picture }}
+
             {% if form.profile_picture.errors %}
                 <div class="text-danger mt-2">
                     {{ form.profile_picture.errors }}
