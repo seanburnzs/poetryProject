@@ -74,6 +74,8 @@ urlpatterns = [
     # Reactions
     path('poem/<int:poem_id>/add_reaction/', views.add_reaction_to_poem, name='add_reaction_to_poem'),
 
+    # S3 direct upload
+    path('force_upload_test/', views.force_upload_test, name='force_upload_test'),
 ]
 
 if settings.NOTIFICATIONS_ENABLED:

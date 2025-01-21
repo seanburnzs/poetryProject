@@ -36,6 +36,10 @@ from collections import defaultdict
 from django.views.generic import ListView, DetailView
 from django.db import IntegrityError
 
+#test
+from storages.backends.s3boto3 import S3Boto3Storage
+from django.core.files.base import ContentFile
+
 def index(request):
     # Featured Poem
     featured_poem = Poetry.objects.filter(status='published').order_by('?').first()
@@ -309,6 +313,8 @@ def edit_profile(request):
             form.save()
             messages.success(request, "Your profile has been updated.")
             return redirect('poetry_app:user_profile', username=request.user.username)
+        else:
+            print(form.errors)
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
     return render(request, 'poetry_app/edit_profile.html', {'form': form})
@@ -1413,3 +1419,10 @@ def learn(request):
         'query': query,
     }
     return render(request, 'poetry_app/learn.html', context)
+
+#test
+def force_upload_test(request):
+    storage = S3Boto3Storage()
+    # Write a small text file to S3
+    storage.save('testfile.txt', ContentFile(b'Hello from Poetry App!'))
+    return HttpResponse("Upload done!")
