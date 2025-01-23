@@ -324,6 +324,7 @@ def edit_profile(request):
                 
                 # Tell the model to update the profile picture field
                 profile.profile_picture.name = path_in_s3
+                profile.save()
 
             # Clear profile picture
             if 'profile_picture-clear' in request.POST:
