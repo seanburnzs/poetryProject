@@ -35,10 +35,10 @@ logger = logging.getLogger(__name__)
 from collections import defaultdict
 from django.views.generic import ListView, DetailView
 from django.db import IntegrityError
-
-#test
 from storages.backends.s3boto3 import S3Boto3Storage
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+
 
 def index(request):
     # Featured Poem
@@ -310,14 +310,37 @@ def edit_profile(request):
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
-            form.save()
+            profile = form.save(commit=False)
+
+            # New profile picture uploaded
+            if 'profile_picture' in request.FILES:
+                uploaded_file = request.FILES['profile_picture']
+
+                # Use S3 storage
+                storage = S3Boto3Storage()
+                # Generate or pick a path in S3
+                path_in_s3 = f"profile_pictures/{request.user.username}_profile.jpg"
+                storage.save(path_in_s3, uploaded_file)
+                
+                # Tell the model to update the profile picture field
+                profile.profile_picture.name = path_in_s3
+
+            # Clear profile picture
+            if 'profile_picture-clear' in request.POST:
+                # Delete old file from s3
+                old_name = profile.profile_picture.name
+                if old_name:
+                    default_storage.delete(old_name)
+                profile.profile_picture = None
+
+            profile.save()
             messages.success(request, "Your profile has been updated.")
             return redirect('poetry_app:user_profile', username=request.user.username)
         else:
-            logger.error(f"ProfileUpdateForm errors: {form.errors}")
-            messages.error(request, "There was an error updating your profile. Please check the form below.")
+            messages.error(request, "There was an error updating your profile.")
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
+
     return render(request, 'poetry_app/edit_profile.html', {'form': form})
 
 
