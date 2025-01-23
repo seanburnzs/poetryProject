@@ -156,8 +156,6 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-AWS_DEFAULT_ACL = None
-
 AWS_QUERYSTRING_AUTH = False
 
 # S3 for media storage
