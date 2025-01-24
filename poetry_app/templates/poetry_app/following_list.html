@@ -5,7 +5,7 @@
 <h2>{{ profile_user.username }} is Following</h2>
 <ul class="list-group">
     {% for follow in following %}
-    <li class="list-group-item">
+    <li class="list-group-item poem-box-primary">
         <a href="{% url 'poetry_app:user_profile' follow.following.username %}">
             {{ follow.following.username }}
         </a>
