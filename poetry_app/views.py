@@ -312,28 +312,30 @@ def edit_profile(request):
         if form.is_valid():
             profile = form.save(commit=False)
 
-            # New profile picture uploaded
+            # Handle profile picture clearing
+            if 'profile_picture-clear' in request.POST:
+                # Delete the old file from S3 if it exists
+                if profile.profile_picture:
+                    default_storage.delete(profile.profile_picture.name)
+                profile.profile_picture = None  # Clear the profile picture
+
+            # Handle new file upload
             if 'profile_picture' in request.FILES:
                 uploaded_file = request.FILES['profile_picture']
 
-                # Use S3 storage
+                # Delete the old file from S3 if it exists
+                if profile.profile_picture:
+                    default_storage.delete(profile.profile_picture.name)
+
+                # Save the new file to S3
                 storage = S3Boto3Storage()
-                # Generate or pick a path in S3
-                path_in_s3 = f"{request.user.username}_profile.jpg"
-                storage.save(f"profile_pictures/{path_in_s3}", uploaded_file)
-                
-                # Tell the model to update the profile picture field
+                path_in_s3 = f"profile_pictures/{request.user.username}_profile.jpg"
+                storage.save(path_in_s3, uploaded_file)
+
+                # Update the profile picture field
                 profile.profile_picture.name = path_in_s3
-                profile.save()
 
-            # Clear profile picture
-            if 'profile_picture-clear' in request.POST:
-                # Delete old file from s3
-                old_name = profile.profile_picture.name
-                if old_name:
-                    default_storage.delete(old_name)
-                profile.profile_picture = None
-
+            # Save the profile
             profile.save()
             messages.success(request, "Your profile has been updated.")
             return redirect('poetry_app:user_profile', username=request.user.username)
