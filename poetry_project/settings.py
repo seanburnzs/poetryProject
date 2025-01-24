@@ -154,6 +154,7 @@ AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
 
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
+    'ACL': 'public-read',
 }
 
 AWS_S3_FILE_OVERWRITE = True
