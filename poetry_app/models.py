@@ -94,7 +94,7 @@ class Profile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(blank=True, null=True)
     favorite_tags = models.ManyToManyField(Tag, blank=True, related_name='favored_by')
     favorite_poets = models.ManyToManyField(User, blank=True, related_name='favored_poets')
     dark_mode = models.BooleanField(default=False)

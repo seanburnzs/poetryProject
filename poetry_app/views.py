@@ -329,8 +329,8 @@ def edit_profile(request):
 
                 # Save the new file to S3
                 storage = S3Boto3Storage()
-                path_in_s3 = f"{request.user.username}_profile.jpg"
-                storage.save(path_in_s3, uploaded_file)
+                path_in_s3 = f"profile_pictures/{request.user.username}_profile.jpg"
+                storage.save(path_in_s3, uploaded_file, acl='public-read')
 
                 # Update the profile picture field
                 profile.profile_picture.name = path_in_s3
