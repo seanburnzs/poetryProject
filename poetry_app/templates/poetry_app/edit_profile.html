@@ -37,7 +37,8 @@
             <!-- If user already has a profile picture, show it and a Clear button -->
             {% if user.profile.profile_picture %}
                 <div class="d-flex flex-column align-items-start mb-3">
-                    <img src="{{ user.profile.profile_picture.url }}" alt="Current Profile Picture"
+                    <img src="{{ user.profile.profile_picture.url }}?v={{ user.profile.updated_at.timestamp }}" 
+                        alt="Current Profile Picture"
                         class="current-pfp mb-2" style="max-width: 150px; border-radius: 50%;">
                     
                     <!-- Clear Button -->
