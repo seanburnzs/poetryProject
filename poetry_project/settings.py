@@ -17,7 +17,7 @@ from decouple import config
 
 # Initialize environment variables
 env = environ.Env(
-    DEBUG=(bool, False)  # Set default DEBUG to False
+    DEBUG=(bool, False)  # Default DEBUG to False
 )
 
 # Build paths inside the project
@@ -30,13 +30,13 @@ environ.Env.read_env(env_file=BASE_DIR / '.env')
 FILE_CHARSET = 'utf-8'
 DEFAULT_CHARSET = 'utf-8'
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# Secret key from environment variable
 SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Debug setting from environment variable
 DEBUG = env('DEBUG')
 
-# Define allowed hosts from environment variable, split by commas
+# Allowed hosts from environment variable
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 # Application definition
