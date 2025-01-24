@@ -1275,3 +1275,22 @@ form input:focus, form textarea:focus, form select:focus {
     color: var(--text);
     font-size: 0.8rem;
 }
+
+/* Profile Picture Styles */
+.profile-picture {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    border: 2px solid var(--secondary);
+}
+
+.default-profile-picture {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    border: 2px solid var(--secondary);
+}
