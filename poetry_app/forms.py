@@ -101,9 +101,13 @@ class ProfileUpdateForm(forms.ModelForm):
         return picture
     
     def save(self, commit=True):
-        """SAVE PFP."""
+        """Save profile picture and handle clearing."""
         profile = super().save(commit=False)
-        profile.profile_picture = self.cleaned_data.get('profile_picture')
+        
+        # Handle profile picture clearing
+        if self.cleaned_data.get('profile_picture-clear'):
+            profile.profile_picture = None  # Clear the profile picture
+        
         if commit:
             profile.save()
         return profile
