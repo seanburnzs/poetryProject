@@ -7,8 +7,8 @@
                 {% if comment.user.profile.profile_picture %}
                     <img src="{{ comment.user.profile.profile_picture.url }}" alt="{{ comment.user.username }}" class="rounded-circle" width="30" height="30">
                 {% else %}
-                    <!-- Default Avatar or Placeholder -->
-                    <img src="https://via.placeholder.com/30/007bff/ffffff?text={{ comment.user.username|slice:':1'|upper }}" alt="{{ comment.user.username }}" class="rounded-circle" width="30" height="30">
+                    <!-- Default Avatar -->
+                    <img src="{% static 'images/profile.png' %}" alt="Default Profile Picture" class="rounded-circle" width="30" height="30">
                 {% endif %}
                 <span class="ms-2">{{ comment.user.username }}</span>
             </a>
