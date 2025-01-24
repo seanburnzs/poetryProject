@@ -330,7 +330,21 @@ def edit_profile(request):
                 # Save the new file to S3
                 storage = S3Boto3Storage()
                 path_in_s3 = f"profile_pictures/{request.user.username}_profile.jpg"
-                storage.save(path_in_s3, uploaded_file, acl='public-read')
+                storage.save(path_in_s3, uploaded_file)
+
+                # Set the ACL to make the file publicly readable
+                from boto3 import client
+                s3_client = client(
+                    's3',
+                    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                    region_name=settings.AWS_S3_REGION_NAME
+                )
+                s3_client.put_object_acl(
+                    Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                    Key=path_in_s3,
+                    ACL='public-read'
+                )
 
                 # Update the profile picture field
                 profile.profile_picture.name = path_in_s3
@@ -345,7 +359,6 @@ def edit_profile(request):
         form = ProfileUpdateForm(instance=request.user.profile)
 
     return render(request, 'poetry_app/edit_profile.html', {'form': form})
-
 
 @login_required
 def unfavorite_poem(request, poem_id):
