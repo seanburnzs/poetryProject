@@ -11,7 +11,7 @@
             {% if profile_user.profile.profile_picture %}
             <img src="{{ profile_user.profile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mb-3" style="max-width: 200px; border-radius: 50%;">
             {% else %}
-            <img src="https://via.placeholder.com/200?text=No+Image" alt="Default Profile Picture" class="img-thumbnail mb-3" style="max-width: 200px; border-radius: 50%;">
+            <img src="{% static 'images/profile.png' %}" alt="Default Profile Picture" class="img-thumbnail mb-3" style="max-width: 200px; border-radius: 50%;">
             {% endif %}
         </div>
         {% comment %}
