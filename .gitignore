@@ -27,3 +27,7 @@ Thumbs.db
 # Static files and media
 /staticfiles/
 /media/
+
+#backup data json files
+backup.json
+old_data.json
