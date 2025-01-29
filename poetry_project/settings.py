@@ -222,6 +222,7 @@ SUMMERNOTE_CONFIG = {
         ['style', ['bold', 'italic', 'underline']],
         ['para', ['paragraph']],
         ['view', ['fullscreen', 'codeview', 'help']],
+        ['color', ['color']],
     ],
     'height': 500,
     'width': '100%',
