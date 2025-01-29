@@ -6,7 +6,7 @@
 <p>Are you sure you want to report this poem?</p>
 
 <h3>{{ poem.title }}</h3>
-<p>{{ poem.body }}</p>
+<p>{{ poem.body|remove_inline_color|safe }}</p>
 
 <form method="post">
     {% csrf_token %}

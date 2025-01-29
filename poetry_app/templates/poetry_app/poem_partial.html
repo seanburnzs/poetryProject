@@ -68,7 +68,7 @@
         </h5>
         <!-- Indented Poem Body (truncated) -->
         <div class="poem-body">
-            {{ poem.body|truncatewords_html:30|safe }}
+            {{ poem.body|remove_inline_color|truncatewords_html:30|safe }}
         </div>
         <small>Posted on {{ poem.created_at|date:"M. d, Y, h:i a" }}</small>
     </div>

@@ -1,5 +1,7 @@
 from django import template
 from itertools import zip_longest
+import bleach
+from django import template
 
 register = template.Library()
 
@@ -20,3 +22,14 @@ def get_item(dictionary, key):
     if dictionary:
         return dictionary.get(key)
     return None
+
+@register.filter
+def remove_inline_color(html_content):
+    # Only allow safe tags, disallow style attributes
+    return bleach.clean(
+        html_content,
+        tags=bleach.ALLOWED_TAGS + ['p', 'span', 'br'],
+        attributes={},
+        styles=[],  # Disallow all inline styles
+        strip=True
+    )

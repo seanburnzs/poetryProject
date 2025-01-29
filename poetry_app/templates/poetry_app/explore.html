@@ -10,7 +10,7 @@
     {% for poem in random_poems %}
     <li>
         <h3>{{ poem.title }}</h3>
-        <p>{{ poem.body }}</p>
+        <p>{{ poem.body|remove_inline_color|safe }}</p>
         <small>Posted by {{ poem.author.username }} on {{ poem.created_at }}</small>
     </li>
     {% endfor %}

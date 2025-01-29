@@ -70,7 +70,7 @@
             <div class="mt-2">
                 <h5 class="text-center">{{ poem.title }}</h5>
                 <div class="poem-body">
-                    {{ poem.body|safe }}
+                    {{ poem.body|remove_inline_color|safe }}
                 </div>
                 <small>Posted on {{ poem.created_at|date:"M. d, Y, h:i a" }}</small>
             </div>

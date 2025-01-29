@@ -708,6 +708,13 @@ form input:focus, form textarea:focus, form select:focus {
     margin-bottom: 0;
 }
 
+.poem-body [style*="color"] {
+    color: inherit !important;
+  }
+  .poem-body [style*="background-color"] {
+    background-color: transparent !important;
+  }  
+
 .clearable-file-input p {
     color: var(--text) !important;
     font-size: 1.1rem;
