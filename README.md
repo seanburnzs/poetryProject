@@ -3,6 +3,12 @@
 
 ---
 
+## Tester Creds  
+**U:** tester  
+**PW:** observer 
+
+---
+
 ## Features
 - **User Authentication**  
   Sign up, log in, and manage profiles with custom bios and profile pictures stored on AWS S3.
@@ -46,10 +52,6 @@ Contributions are welcome. Feel free to open issues or submit pull requests to e
 ## DISCLAIMER
 The site is deployed on Render and is technically in production, so it will shutdown after inactivity, meaning when you first load the site, it will take one minute.
 
-## Known Bug  
+## Known Bugs  
 - Friends Tab doesn't populate sometimes  
 - Profile pictures sometimes go to the wrong AWS S3 URL  
-
-## Tester Creds  
-**U:** tester  
-**PW:** observer 
