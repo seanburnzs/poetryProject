@@ -1367,7 +1367,7 @@ class LearningPathListView(ListView):
     template_name = 'poetry_app/learning_path_list.html'
     context_object_name = 'learning_paths'
 
-
+@login_required
 def discover(request):
     news_messages = News.objects.filter(is_active=True)
     daily_prompt = DailyPrompt.objects.filter(date=timezone.now().date()).first()
@@ -1400,7 +1400,7 @@ def discover(request):
             comments_count=Count('comments')
         ).order_by('-created_at')[:20]
 
-        # Debugging prints (optional)
+        # Debugging prints
         print(f"Friends in discover view: {[user.username for user in friends]}")
         print(f"Friends' poems in discover view: {[poem.title for poem in friends_poems]}")
 
@@ -1462,6 +1462,6 @@ def learn(request):
 #test
 def force_upload_test(request):
     storage = S3Boto3Storage()
-    # Write a small text file to S3
+    # Write a text file to S3
     storage.save('testfile.txt', ContentFile(b'Hello from Poetry App!'))
     return HttpResponse("Upload done!")
