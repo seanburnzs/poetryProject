@@ -526,10 +526,10 @@ def read_poems(request):
                 friends_poems = friends_poems.annotate(num_comments=Count('comments')).order_by('-num_comments')
 
     # Limit the number of poems per tab for performance
-    explore_poems = explore_poems[:20]
+    explore_poems = explore_poems[:47]
     if request.user.is_authenticated:
-        following_poems = following_poems[:20]
-        friends_poems = friends_poems[:20]
+        following_poems = following_poems[:47]
+        friends_poems = friends_poems[:47]
 
     reaction_icons = {
         'insightful': 'fas fa-lightbulb text-warning',
@@ -1375,14 +1375,14 @@ def discover(request):
     explore_poems = Poetry.objects.filter(status='published').annotate(
         likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
         comments_count=Count('comments')
-    ).order_by('-created_at')[:20]
+    ).order_by('-created_at')[:47]
 
     if request.user.is_authenticated:
         following_users = request.user.following_set.values_list('following', flat=True)
         following_poems = Poetry.objects.filter(author__in=following_users, status='published').annotate(
             likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
             comments_count=Count('comments')
-        ).order_by('-crgit eated_at')[:20]
+        ).order_by('-created_at')[:47]
 
         # Calculate mutual followers (friends)
         friends = User.objects.filter(
@@ -1398,7 +1398,7 @@ def discover(request):
         ).annotate(
             likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
             comments_count=Count('comments')
-        ).order_by('-created_at')[:20]
+        ).order_by('-created_at')[:47]
 
         # Debugging prints
         print(f"Friends in discover view: {[user.username for user in friends]}")
