@@ -1368,7 +1368,6 @@ class LearningPathListView(ListView):
     context_object_name = 'learning_paths'
 
 
-@login_required
 def discover(request):
     news_messages = News.objects.filter(is_active=True)
     daily_prompt = DailyPrompt.objects.filter(date=timezone.now().date()).first()
@@ -1380,24 +1379,19 @@ def discover(request):
 
     if request.user.is_authenticated:
         following_users = request.user.following_set.values_list('following', flat=True)
-        following_poems = Poetry.objects.filter(
-            author__in=following_users, status='published'
-        ).annotate(
+        following_poems = Poetry.objects.filter(author__in=following_users, status='published').annotate(
             likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
             comments_count=Count('comments')
         ).order_by('-created_at')[:20]
 
-        # Debug info
-        for poem in explore_poems:
-            print(f"Poem ID: {poem.id}, Title: '{poem.title}', Likes Count: {poem.likes_count}")
-
-        # Define "friends" as mutual followers
+        # Calculate mutual followers (friends)
         friends = User.objects.filter(
             following_set__follower=request.user
         ).filter(
             followers_set__following=request.user
         ).distinct()
 
+        # Fetch poems from friends
         friends_poems = Poetry.objects.filter(
             author__in=friends,
             status='published'
@@ -1406,14 +1400,14 @@ def discover(request):
             comments_count=Count('comments')
         ).order_by('-created_at')[:20]
 
-        favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-        liked_poem_ids = PoemReaction.objects.filter(
-            user=request.user, reaction_type='like'
-        ).values_list('poem_id', flat=True)
+        # Debugging prints (optional)
+        print(f"Friends in discover view: {[user.username for user in friends]}")
+        print(f"Friends' poems in discover view: {[poem.title for poem in friends_poems]}")
 
-        user_reactions = PoemReaction.objects.filter(
-            user=request.user
-        ).values('poem_id', 'reaction_type')
+        favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
+        liked_poem_ids = PoemReaction.objects.filter(user=request.user, reaction_type='like').values_list('poem_id', flat=True)
+
+        user_reactions = PoemReaction.objects.filter(user=request.user).values('poem_id', 'reaction_type')
         user_reactions_list = defaultdict(list)
         for reaction in user_reactions:
             user_reactions_list[reaction['poem_id']].append(reaction['reaction_type'])
@@ -1447,7 +1441,6 @@ def discover(request):
         'reaction_icons': reaction_icons,
     }
     return render(request, 'poetry_app/discover.html', context)
-
 
 def learn(request):
     query = request.GET.get('q', '')
