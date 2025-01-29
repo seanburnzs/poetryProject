@@ -25,6 +25,8 @@
 - **AWS S3**: Storage for user profile images  
 - **Render**: Platform for deployment  
 - **HTML, CSS, JavaScript**: Front-end styling and interactivity  
+- **Poetrydb.org**: Fetch Poems
+   > *Example: https://poetrydb.org/author*
 
 ---
 
@@ -40,3 +42,14 @@
 
 ## Contributing
 Contributions are welcome. Feel free to open issues or submit pull requests to enhance features, fix bugs, or improve documentation.
+
+## DISCLAIMER
+The site is deployed on Render and is technically in production, so it will shutdown after inactivity, meaning when you first load the site, it will take one minute.
+
+## Known Bug
+Friends Tab doesn't populate sometimes
+Profile pictures sometimes go to the wrong aws s3 url
+
+## Tester Creds
+**U** tester
+**PW** observer
