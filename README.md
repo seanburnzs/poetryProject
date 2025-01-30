@@ -3,6 +3,11 @@
 
 ---
 
+## DISCLAIMER
+The site is deployed on Render and is technically in production, so it will shutdown after inactivity, meaning when you first load the site, it will take one minute.
+
+---
+
 ## Tester Creds  
 **U:** tester  
 **PW:** observer 
@@ -48,9 +53,6 @@
 
 ## Contributing
 Contributions are welcome. Feel free to open issues or submit pull requests to enhance features, fix bugs, or improve documentation.
-
-## DISCLAIMER
-The site is deployed on Render and is technically in production, so it will shutdown after inactivity, meaning when you first load the site, it will take one minute.
 
 ## Known Bugs  
 - Friends Tab doesn't populate sometimes  
