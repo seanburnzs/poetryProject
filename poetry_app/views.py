@@ -1389,48 +1389,66 @@ class LearningPathListView(ListView):
 
 @login_required
 def discover(request):
+    # Get active news and daily prompt
     news_messages = News.objects.filter(is_active=True)
     daily_prompt = DailyPrompt.objects.filter(date=timezone.now().date()).first()
-    # filtered Count('reactions')
-    explore_poems = Poetry.objects.filter(status='published').annotate(
+
+    # Base query for published poems with annotations
+    base_poem_query = Poetry.objects.filter(status='published').annotate(
         likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
         comments_count=Count('comments')
-    ).order_by('-created_at')[:47]
+    ).select_related('author').prefetch_related('reactions', 'comments')
+
+    # Get explore poems (excluding current user's poems)
+    explore_poems = base_poem_query.exclude(author=request.user).order_by('-created_at')[:47]
 
     if request.user.is_authenticated:
+        # Get following users (excluding self)
         following_users = request.user.following_set.values_list('following', flat=True)
-        following_poems = Poetry.objects.filter(author__in=following_users, status='published').annotate(
-            likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-            comments_count=Count('comments')
+        
+        # Get following poems
+        following_poems = base_poem_query.filter(
+            author__in=following_users
         ).order_by('-created_at')[:47]
 
         # Calculate mutual followers (friends)
-        friends = User.objects.filter(
-            following_set__follower=request.user, # Users who follow the current user
-            followers_set__following=request.user # Users who are followed by the current user
+        mutual_friends = User.objects.exclude(id=request.user.id).filter(
+            following_set__following=request.user,  # Users following me
+            followers_set__follower=request.user    # Users I follow
         ).distinct()
 
-        # Fetch poems from friends
-        friends_poems = Poetry.objects.filter(
-            author__in=friends,
-            status='published'
-        ).annotate(
-            likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-            comments_count=Count('comments')
+        # Log mutual friends for debugging
+        logger.debug(f"Mutual friends for {request.user.username}: {[user.username for user in mutual_friends]}")
+
+        # Get friends' poems
+        friends_poems = base_poem_query.filter(
+            author__in=mutual_friends
         ).order_by('-created_at')[:47]
 
-        # Debugging prints
-        print(f"Friends in discover view: {[user.username for user in friends]}")
-        print(f"Friends' poems in discover view: {[poem.title for poem in friends_poems]}")
+        # Log friends' poems for debugging
+        logger.debug(f"Friends' poems count: {friends_poems.count()}")
 
-        favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-        liked_poem_ids = PoemReaction.objects.filter(user=request.user, reaction_type='like').values_list('poem_id', flat=True)
+        # Get user's favorites and reactions
+        favorite_poem_ids = FavoritePoem.objects.filter(
+            user=request.user
+        ).values_list('poem_id', flat=True)
 
-        user_reactions = PoemReaction.objects.filter(user=request.user).values('poem_id', 'reaction_type')
+        liked_poem_ids = PoemReaction.objects.filter(
+            user=request.user, 
+            reaction_type='like'
+        ).values_list('poem_id', flat=True)
+
+        # Get all user reactions
+        user_reactions = PoemReaction.objects.filter(
+            user=request.user
+        ).values('poem_id', 'reaction_type')
+        
+        # Build reactions dictionary
         user_reactions_list = defaultdict(list)
         for reaction in user_reactions:
             user_reactions_list[reaction['poem_id']].append(reaction['reaction_type'])
 
+        # Reaction icons mapping
         reaction_icons = {
             'insightful': 'fas fa-lightbulb text-warning',
             'beautiful': 'fas fa-feather text-primary',
@@ -1440,6 +1458,14 @@ def discover(request):
             'thoughtful': 'fas fa-brain text-secondary',
             'uplifting': 'fas fa-smile-beam text-success',
         }
+
+        # Further filter explore poems to exclude following and friends
+        explore_poems = explore_poems.exclude(
+            author__in=following_users
+        ).exclude(
+            author__in=mutual_friends
+        )
+
     else:
         following_poems = Poetry.objects.none()
         friends_poems = Poetry.objects.none()
@@ -1458,7 +1484,9 @@ def discover(request):
         'liked_poem_ids': liked_poem_ids,
         'user_reactions_list': user_reactions_list,
         'reaction_icons': reaction_icons,
+        'mutual_friends_count': mutual_friends.count() if request.user.is_authenticated else 0,
     }
+
     return render(request, 'poetry_app/discover.html', context)
 
 def learn(request):
