@@ -39,6 +39,7 @@ from storages.backends.s3boto3 import S3Boto3Storage
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
+logger = logging.getLogger(__name__)
 
 def index(request):
     # Featured Poem
@@ -314,28 +315,43 @@ def edit_profile(request):
 
             # Handle profile picture clearing
             if 'profile_picture-clear' in request.POST:
-                # Delete the old file from S3 if it exists
                 if profile.profile_picture:
-                    default_storage.delete(profile.profile_picture.name)
-                profile.profile_picture = None  # Clear the profile picture
+                    try:
+                        # Delete old file from S3
+                        default_storage.delete(profile.profile_picture.name)
+                        logger.info(f"Deleted old profile picture for {request.user.username}")
+                    except Exception as e:
+                        logger.error(f"Error deleting old profile picture: {e}")
+                profile.profile_picture = None
 
             # Handle new file upload
             if 'profile_picture' in request.FILES:
                 uploaded_file = request.FILES['profile_picture']
-
-                # Delete the old file from S3 if it exists
+                
+                # Get the original file extension
+                file_extension = uploaded_file.name.split('.')[-1].lower()
+                
+                # Delete old file if exists
                 if profile.profile_picture:
-                    default_storage.delete(profile.profile_picture.name)
+                    try:
+                        default_storage.delete(profile.profile_picture.name)
+                        logger.info(f"Deleted old profile picture for {request.user.username}")
+                    except Exception as e:
+                        logger.error(f"Error deleting old profile picture: {e}")
 
-                # Save the new file to S3
-                storage = S3Boto3Storage()
-                path_in_s3 = f"profile_pictures/{request.user.username}_profile.jpg"
-                storage.save(path_in_s3, uploaded_file)
+                try:
+                    # Generate S3 path with proper folder structure and original extension
+                    filename = f"{request.user.username}_profile.{file_extension}"
+                    s3_path = f"profile_pictures/{filename}"
 
-                # Update the profile picture field
-                profile.profile_picture.name = path_in_s3
+                    # Save new file
+                    profile.profile_picture.name = default_storage.save(s3_path, uploaded_file)
+                    logger.info(f"Saved new profile picture for {request.user.username}: {s3_path}")
+                except Exception as e:
+                    logger.error(f"Error saving new profile picture: {e}")
+                    messages.error(request, "There was an error uploading your profile picture.")
+                    return redirect('poetry_app:edit_profile')
 
-            # Save the profile
             profile.save()
             messages.success(request, "Your profile has been updated.")
             return redirect('poetry_app:user_profile', username=request.user.username)
@@ -1386,9 +1402,8 @@ def discover(request):
 
         # Calculate mutual followers (friends)
         friends = User.objects.filter(
-            following_set__follower=request.user
-        ).filter(
-            followers_set__following=request.user
+            following_set__follower=request.user, # Users who follow the current user
+            followers_set__following=request.user # Users who are followed by the current user
         ).distinct()
 
         # Fetch poems from friends
