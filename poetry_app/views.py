@@ -317,46 +317,48 @@ def edit_profile(request):
             if 'profile_picture-clear' in request.POST:
                 if profile.profile_picture:
                     try:
-                        # Delete old file from S3
                         default_storage.delete(profile.profile_picture.name)
-                        logger.info(f"Deleted old profile picture for {request.user.username}")
+                        logger.info(f"Cleared profile picture for {request.user.username}")
                     except Exception as e:
-                        logger.error(f"Error deleting old profile picture: {e}")
+                        logger.error(f"Error clearing profile picture: {e}")
                 profile.profile_picture = None
 
             # Handle new file upload
             if 'profile_picture' in request.FILES:
                 uploaded_file = request.FILES['profile_picture']
                 
-                # Get the original file extension
+                # Get file extension from uploaded file
                 file_extension = uploaded_file.name.split('.')[-1].lower()
                 
-                # Delete old file if exists
-                if profile.profile_picture:
-                    try:
-                        default_storage.delete(profile.profile_picture.name)
-                        logger.info(f"Deleted old profile picture for {request.user.username}")
-                    except Exception as e:
-                        logger.error(f"Error deleting old profile picture: {e}")
+                # Create consistent filename
+                filename = f"{request.user.username}_profile.{file_extension}"
+                s3_path = f"profile_pictures/{filename}"
+
+                # Delete any existing files with similar names
+                try:
+                    for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+                        old_path = f"profile_pictures/{request.user.username}_profile.{ext}"
+                        try:
+                            default_storage.delete(old_path)
+                        except:
+                            pass
+                except Exception as e:
+                    logger.error(f"Error cleaning up old profile pictures: {e}")
 
                 try:
-                    # Generate S3 path with proper folder structure and original extension
-                    filename = f"{request.user.username}_profile.{file_extension}"
-                    s3_path = f"profile_pictures/{filename}"
-
-                    # Save new file
+                    # Save new file with consistent name
                     profile.profile_picture.name = default_storage.save(s3_path, uploaded_file)
-                    logger.info(f"Saved new profile picture for {request.user.username}: {s3_path}")
+                    logger.info(f"Saved profile picture: {s3_path}")
                 except Exception as e:
-                    logger.error(f"Error saving new profile picture: {e}")
-                    messages.error(request, "There was an error uploading your profile picture.")
+                    logger.error(f"Error saving profile picture: {e}")
+                    messages.error(request, "Error uploading profile picture. Please try again.")
                     return redirect('poetry_app:edit_profile')
 
             profile.save()
-            messages.success(request, "Your profile has been updated.")
+            messages.success(request, "Profile updated successfully.")
             return redirect('poetry_app:user_profile', username=request.user.username)
         else:
-            messages.error(request, "There was an error updating your profile.")
+            messages.error(request, "Please correct the errors below.")
     else:
         form = ProfileUpdateForm(instance=request.user.profile)
 
