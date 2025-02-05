@@ -3,7 +3,7 @@ from .settings import *
 DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-# Use SQLite for local development
+# SQLite for local development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

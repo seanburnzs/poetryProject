@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-# Set development settings
+# development settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'poetry_project.settings_dev')
 
 print("Starting development server...")
