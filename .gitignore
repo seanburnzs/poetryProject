@@ -31,3 +31,10 @@ Thumbs.db
 #backup data json files
 backup.json
 old_data.json
+
+# Development
+media/
+db.sqlite3
+*.pyc
+__pycache__/
+.env.dev
