@@ -55,5 +55,4 @@ The site is deployed on Render and is technically in production, so it will shut
 Contributions are welcome. Feel free to open issues or submit pull requests to enhance features, fix bugs, or improve documentation.
 
 ## Known Bugs  
-- Friends Tab doesn't populate sometimes  
-- Profile pictures sometimes go to the wrong AWS S3 URL  
+- Friends Tab doesn't populate sometimes
