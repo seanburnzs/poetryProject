@@ -307,17 +307,19 @@ def user_profile(request, username):
 
 
 @login_required
+@login_required
 def edit_profile(request):
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             profile = form.save(commit=False)
+            storage = S3Boto3Storage()
 
             # Handle profile picture clearing
             if 'profile_picture-clear' in request.POST:
                 if profile.profile_picture:
                     try:
-                        default_storage.delete(profile.profile_picture.name)
+                        storage.delete(profile.profile_picture.name)
                         logger.info(f"Cleared profile picture for {request.user.username}")
                     except Exception as e:
                         logger.error(f"Error clearing profile picture: {e}")
@@ -331,24 +333,24 @@ def edit_profile(request):
                 file_extension = uploaded_file.name.split('.')[-1].lower()
                 
                 # Create consistent filename
-                filename = f"{request.user.username}_profile.{file_extension}"
-                s3_path = f"profile_pictures/{filename}"
+                filename = f"profile_pictures/{request.user.username}_profile.{file_extension}"
 
                 # Delete any existing files with similar names
                 try:
                     for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
                         old_path = f"profile_pictures/{request.user.username}_profile.{ext}"
                         try:
-                            default_storage.delete(old_path)
+                            storage.delete(old_path)
                         except:
                             pass
                 except Exception as e:
                     logger.error(f"Error cleaning up old profile pictures: {e}")
 
                 try:
-                    # Save new file with consistent name
-                    profile.profile_picture.name = default_storage.save(s3_path, uploaded_file)
-                    logger.info(f"Saved profile picture: {s3_path}")
+                    # Directly save to S3 with exact filename
+                    storage.save(filename, uploaded_file)
+                    profile.profile_picture.name = filename
+                    logger.info(f"Saved profile picture: {filename}")
                 except Exception as e:
                     logger.error(f"Error saving profile picture: {e}")
                     messages.error(request, "Error uploading profile picture. Please try again.")
