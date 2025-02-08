@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import environ
-import os  # Added for BASE_DIR usage in logging
-from decouple import config
 
 # Initialize environment variables
 env = environ.Env(
