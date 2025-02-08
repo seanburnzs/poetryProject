@@ -3,11 +3,6 @@
 
 ---
 
-## DISCLAIMER
-The site is deployed on Render and is technically in production, so it will shutdown after inactivity, meaning when you first load the site, it will take one minute.
-
----
-
 ## Tester Creds  
 **U:** tester  
 **PW:** observer 
