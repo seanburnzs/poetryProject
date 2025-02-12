@@ -19,7 +19,6 @@ urlpatterns = [
     path('poem/<int:poem_id>/', views.view_poem, name='view_poem'),
 
     # User Poems and Favorites
-    path('my_poems/', views.my_poems, name='my_poems'),
     path('favorites/', views.favorites, name='favorites'),
     path('favorites/remove/<int:saved_poem_id>/', views.remove_saved, name='remove_saved'),
     path('poem/save/<int:poem_id>/', views.save_poem, name='save_poem'),
@@ -35,9 +34,6 @@ urlpatterns = [
     path('unfollow/<str:username>/', views.unfollow_user, name='unfollow_user'),
 
     # Additional Features
-    path('featured/', views.featured_poem, name='featured_poem'),
-    path('read/<str:tag_name>/', views.filter_by_tag, name='filter_by_tag'),
-    path('read/', views.read_poems, name='read'),
     path('preferences/', views.preferences, name='preferences'),
     
     # Likes

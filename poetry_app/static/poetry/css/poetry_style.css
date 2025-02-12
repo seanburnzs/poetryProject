@@ -145,16 +145,20 @@ button:hover {
     line-height: 1.4;
     margin-right: 3px;
     margin-bottom: 3px;
+    transition: none !important;
+    transform: none !important;
 }
 .nav-tabs .nav-link.active {
     background-color: var(--background) !important;
     color: var(--text) !important;
     border: 2px solid var(--secondary);
+    transform: none !important;
 }
 .nav-tabs .nav-link:hover {
     background-color: var(--background);
     color: var(--text);
     border: 2px solid var(--secondary);
+    transform: none !important;
 }
 .nav-tabs {
     border-bottom: none;
@@ -1300,4 +1304,12 @@ form input:focus, form textarea:focus, form select:focus {
     object-fit: cover;
     object-position: center;
     border: 2px solid var(--secondary);
+}
+
+.login-box {
+    transition: none !important;
+}
+
+.login-box:hover {
+    transform: none !important;
 }

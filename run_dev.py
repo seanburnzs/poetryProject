@@ -4,5 +4,5 @@ import subprocess
 # development settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'poetry_project.settings_dev')
 
-print("Starting development server...")
-subprocess.run(['python', 'manage.py', 'runserver', '8000'])
+print("STARTING DEV SERVER...")
+subprocess.run([os.path.join(os.environ['VIRTUAL_ENV'], 'Scripts', 'python'), 'manage.py', 'runserver', '8080'])

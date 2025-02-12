@@ -1,7 +1,5 @@
-from pathlib import Path
 import environ
-import os
-from decouple import config, Config, RepositoryEnv
+from decouple import config
 from .settings import *
 
 # Initialize environ
@@ -35,9 +33,17 @@ MEDIA_URL = '/media/'
 # Allow all hosts in development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# Disable Redis/Channels in development if not needed
+# Disable Redis/Channels in development
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
+# Disable forced HTTPS in development
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False

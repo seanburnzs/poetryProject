@@ -41,38 +41,6 @@ from django.core.files.storage import default_storage
 
 logger = logging.getLogger(__name__)
 
-def index(request):
-    # Featured Poem
-    featured_poem = Poetry.objects.filter(status='published').order_by('?').first()
-
-    news_messages = News.objects.filter(is_active=True).order_by('-created_at')
-
-    today = timezone.now().date()
-    daily_prompt = DailyPrompt.objects.filter(date=today).first()
-
-    # Latest Poems (replace Count('likes') with Count of 'reactions' filtered for 'like')
-    poems = Poetry.objects.filter(status='published').annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    ).order_by('-created_at')[:10]
-
-    favorite_poem_ids = []
-    if request.user.is_authenticated:
-        favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-
-    # Prepare absolute URLs for poems
-    for poem in poems:
-        poem.absolute_url = request.build_absolute_uri(reverse('poetry_app:view_poem', args=[poem.id]))
-
-    return render(request, 'poetry_app/index.html', {
-        'featured_poem': featured_poem,
-        'poems': poems,
-        'favorite_poem_ids': favorite_poem_ids,
-        'news_messages': news_messages,
-        'daily_prompt': daily_prompt,
-    })
-
-
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -86,7 +54,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'poetry_app/register.html', {'form': form})
-
 
 @login_required
 def submit_poetry(request):
@@ -164,7 +131,6 @@ def submit_poetry(request):
 
     return render(request, 'poetry_app/submit_poetry.html', {'form': form, 'daily_prompt': daily_prompt})
 
-
 @login_required
 def delete_poem(request, poem_id):
     poem = get_object_or_404(Poetry, id=poem_id)
@@ -179,41 +145,6 @@ def delete_poem(request, poem_id):
         return redirect(reverse('poetry_app:user_profile', args=[request.user.username]))
 
     return render(request, 'poetry_app/confirm_delete.html', {'poem': poem})
-
-
-@login_required
-def my_poems(request):
-    # My Creations
-    poems = Poetry.objects.filter(author=request.user).annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    ).order_by('-updated_at')
-    drafts = poems.filter(status='draft')
-    published = poems.filter(status='published')
-
-    # My Favorites
-    favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-    favorite_poems = Poetry.objects.filter(id__in=favorite_poem_ids).annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    )
-
-    # My Likes
-    liked_poem_ids = PoemReaction.objects.filter(user=request.user, reaction_type='like').values_list('poem_id', flat=True)
-    liked_poems = Poetry.objects.filter(id__in=liked_poem_ids).annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    )
-
-    return render(request, 'poetry_app/my_poems.html', {
-        'drafts': drafts,
-        'published': published,
-        'favorite_poems': favorite_poems,
-        'liked_poems': liked_poems,
-        'favorite_poem_ids': favorite_poem_ids,
-        'liked_poem_ids': liked_poem_ids,
-    })
-
 
 @login_required
 def user_profile(request, username):
@@ -380,201 +311,6 @@ def remove_saved(request, saved_poem_id):
     saved_poem.delete()
     messages.success(request, 'Poem removed from favorites.')
     return redirect('poetry_app:favorites')
-
-
-def featured_poem(request):
-    poem = Poetry.objects.filter(status='published').order_by('?').first()
-    return render(request, 'poetry_app/featured_poem.html', {'poem': poem})
-
-
-def filter_by_tag(request, tag_name):
-    tag = get_object_or_404(Tag, name=tag_name)
-    poems = Poetry.objects.filter(tags=tag, status='published').annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    ).order_by('-created_at')
-    return render(request, 'poetry_app/read.html', {'poems': poems, 'tag': tag})
-
-
-def for_you(request):
-    if request.user.is_authenticated:
-        user_tags = request.user.profile.favorite_tags.all()
-        favorite_poets = request.user.profile.favorite_poets.all()
-        poems = (Poetry.objects.filter(
-            Q(tags__in=user_tags) | Q(author__in=favorite_poets),
-            status='published'
-        )
-        .distinct()
-        .annotate(
-            likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-            comments_count=Count('comments')
-        )
-        .order_by('-created_at'))
-    else:
-        poems = Poetry.objects.none()
-    return render(request, 'poetry_app/for_you.html', {'poems': poems})
-
-
-def explore(request):
-    all_poems = Poetry.objects.filter(status='published').annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    )
-    random_poems = all_poems.order_by('?')[:5] if all_poems.exists() else []
-    return render(request, 'poetry_app/explore.html', {'random_poems': random_poems})
-
-
-@login_required
-def read_poems(request):
-    # Fetch user reactions
-    user_reactions = {}
-    user_reactions_list = defaultdict(list)
-    if request.user.is_authenticated:
-        reactions = PoemReaction.objects.filter(user=request.user)
-        user_reactions = {reaction.poem_id: reaction.reaction_type for reaction in reactions}
-        for reaction in reactions:
-            user_reactions_list[reaction.poem_id].append(reaction.reaction_type)
-
-    # Initialize querysets for all tabs (replace Count('likes') with Count of 'reactions' filtered for 'like')
-    explore_poems = Poetry.objects.filter(status='published').annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    )
-
-    following_poems = Poetry.objects.none()
-    friends_poems = Poetry.objects.none()
-
-    if request.user.is_authenticated:
-        # Fetch users the current user is following
-        following_users = request.user.following_set.values_list('following', flat=True)
-
-        # Poems by followed users
-        following_poems = Poetry.objects.filter(
-            author__in=following_users,
-            status='published'
-        ).annotate(
-            likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-            comments_count=Count('comments')
-        )
-
-        # Define 'friends' as mutual followers
-        friends = User.objects.filter(
-            following_set__follower=request.user
-        ).filter(
-            followers_set__following=request.user
-        ).distinct()
-
-        # Debug: Print friends' usernames
-        print(f"Friends: {[user.username for user in friends]}")
-
-        # Poems by friends
-        friends_poems = Poetry.objects.filter(
-            author__in=friends,
-            status='published'
-        ).annotate(
-            likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-            comments_count=Count('comments')
-        )
-
-        # Debug: Print friends' poems
-        print(f"Friends' Poems: {[poem.title for poem in friends_poems]}")
-
-        # Fetch liked and favorite poems IDs
-        favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-        liked_poem_ids = PoemReaction.objects.filter(user=request.user, reaction_type='like').values_list('poem_id', flat=True)
-    else:
-        favorite_poem_ids = []
-        liked_poem_ids = []
-
-    # Handle Advanced Search Filters
-    form = AdvancedSearchForm(request.GET or None)
-    if form.is_valid():
-        query = form.cleaned_data.get('query')
-        author = form.cleaned_data.get('author')
-        tag = form.cleaned_data.get('tag')
-        date_from = form.cleaned_data.get('date_from')
-        date_to = form.cleaned_data.get('date_to')
-        sort_by = form.cleaned_data.get('sort_by')
-
-        if query:
-            explore_poems = explore_poems.filter(Q(title__icontains=query) | Q(body__icontains=query))
-            following_poems = following_poems.filter(Q(title__icontains=query) | Q(body__icontains=query))
-            friends_poems = friends_poems.filter(Q(title__icontains=query) | Q(body__icontains=query))
-
-        if author:
-            explore_poems = explore_poems.filter(author__username__icontains=author)
-            following_poems = following_poems.filter(author__username__icontains=author)
-            friends_poems = friends_poems.filter(author__username__icontains=author)
-
-        if tag:
-            explore_poems = explore_poems.filter(tags=tag)
-            following_poems = following_poems.filter(tags=tag)
-            friends_poems = friends_poems.filter(tags=tag)
-
-        if date_from:
-            explore_poems = explore_poems.filter(created_at__gte=date_from)
-            following_poems = following_poems.filter(created_at__gte=date_from)
-            friends_poems = friends_poems.filter(created_at__gte=date_from)
-
-        if date_to:
-            explore_poems = explore_poems.filter(created_at__lte=date_to)
-            following_poems = following_poems.filter(created_at__lte=date_to)
-            friends_poems = friends_poems.filter(created_at__lte=date_to)
-
-        if sort_by:
-            # For 'likes', use num_likes=Count('reactions', filter=Q(reactions__reaction_type='like'))
-            if sort_by == 'date':
-                explore_poems = explore_poems.order_by('-created_at')
-                following_poems = following_poems.order_by('-created_at')
-                friends_poems = friends_poems.order_by('-created_at')
-            elif sort_by == 'likes':
-                explore_poems = explore_poems.annotate(
-                    num_likes=Count('reactions', filter=Q(reactions__reaction_type='like'))
-                ).order_by('-num_likes')
-
-                following_poems = following_poems.annotate(
-                    num_likes=Count('reactions', filter=Q(reactions__reaction_type='like'))
-                ).order_by('-num_likes')
-
-                friends_poems = friends_poems.annotate(
-                    num_likes=Count('reactions', filter=Q(reactions__reaction_type='like'))
-                ).order_by('-num_likes')
-
-            elif sort_by == 'comments':
-                explore_poems = explore_poems.annotate(num_comments=Count('comments')).order_by('-num_comments')
-                following_poems = following_poems.annotate(num_comments=Count('comments')).order_by('-num_comments')
-                friends_poems = friends_poems.annotate(num_comments=Count('comments')).order_by('-num_comments')
-
-    # Limit the number of poems per tab for performance
-    explore_poems = explore_poems[:47]
-    if request.user.is_authenticated:
-        following_poems = following_poems[:47]
-        friends_poems = friends_poems[:47]
-
-    reaction_icons = {
-        'insightful': 'fas fa-lightbulb text-warning',
-        'beautiful': 'fas fa-feather text-primary',
-        'inspiring': 'fas fa-sun text-success',
-        'sad': 'fas fa-sad-tear text-info',
-        'funny': 'fas fa-laugh text-warning',
-        'thoughtful': 'fas fa-brain text-secondary',
-        'uplifting': 'fas fa-smile-beam text-success',
-    }
-
-    context = {
-        'explore_poems': explore_poems,
-        'following_poems': following_poems,
-        'friends_poems': friends_poems,
-        'form': form,
-        'favorite_poem_ids': favorite_poem_ids,
-        'liked_poem_ids': liked_poem_ids,
-        'user_reactions': user_reactions,
-        'user_reactions_list': user_reactions_list,
-        'reaction_icons': reaction_icons,
-    }
-
-    return render(request, 'poetry_app/read.html', context)
-
 
 @login_required
 def preferences(request):
@@ -769,32 +505,6 @@ def reply_comment(request, comment_id):
         'form': form,
         'parent_comment': parent_comment,
     })
-
-
-@login_required
-def personalized_content(request):
-    profile = request.user.profile
-    favorite_tags = profile.favorite_tags.all()
-    favorite_poets = profile.favorite_poets.all()
-
-    poems = (Poetry.objects.filter(
-        Q(tags__in=favorite_tags) | Q(author__in=favorite_poets),
-        status='published'
-    )
-    .distinct()
-    .annotate(
-        likes_count=Count('reactions', filter=Q(reactions__reaction_type='like')),
-        comments_count=Count('comments')
-    )
-    .order_by('-created_at')[:10])
-
-    favorite_poem_ids = FavoritePoem.objects.filter(user=request.user).values_list('poem_id', flat=True)
-
-    return render(request, 'poetry_app/personalized_content.html', {
-        'poems': poems,
-        'favorite_poem_ids': favorite_poem_ids,
-    })
-
 
 @login_required
 def follow_user(request, username):

@@ -38,3 +38,5 @@ db.sqlite3
 *.pyc
 __pycache__/
 .env.dev
+settings_dev.py
+run_dev.py
